@@ -35,6 +35,27 @@ export function initUI(domElements) {
     
     // Set up task creation button drag
     drag.setupTaskCreateDragging(elements.createTaskBtn);
+    
+    // Position create task button next to icons
+    positionCreateTaskButton();
+}
+
+// Position the create task button beside the icon grid
+function positionCreateTaskButton() {
+    const iconGrid = document.querySelector('.icon-grid');
+    const createTaskBtn = document.getElementById('create-task');
+    
+    if (iconGrid && createTaskBtn) {
+        // Make the button inline with the icon grid
+        iconGrid.style.display = 'inline-grid';
+        iconGrid.style.verticalAlign = 'middle';
+        iconGrid.style.width = 'calc(100% - 140px)';
+        
+        createTaskBtn.style.display = 'inline-block';
+        createTaskBtn.style.verticalAlign = 'middle';
+        createTaskBtn.style.width = '130px';
+        createTaskBtn.style.marginLeft = '10px';
+    }
 }
 
 // Setup modal drag behavior
@@ -63,20 +84,18 @@ function setupModalDrag() {
         const modalContent = modal.querySelector('.modal-content');
         const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
         const diffY = startY - currentY;
-        const newHeight = startHeight + diffY;
-
-        // Set minimum and maximum height constraints
-        const minHeight = window.innerHeight * 0.25; // 25% of viewport height
-        const maxHeight = window.innerHeight * 0.75; // 75% of viewport height
         
-        // Apply the new height within constraints
-        modalContent.style.height = `${Math.max(minHeight, Math.min(maxHeight, newHeight))}px`;
+        // Only snap to two positions: compact or expanded
+        const threshold = window.innerHeight * 0.3; // 30% of viewport height
         
-        // Toggle expanded class based on height
-        if (newHeight > minHeight * 1.5) {
+        if (diffY > threshold) {
+            // Expanded mode
             modal.classList.add('expanded');
+            modalContent.style.height = '75vh';
         } else {
+            // Compact mode
             modal.classList.remove('expanded');
+            modalContent.style.height = 'auto';
         }
         
         e.preventDefault();
@@ -237,6 +256,9 @@ export function renderDateView() {
         dateGroup.appendChild(tasksContainer);
         elements.dateGroupsContainer.appendChild(dateGroup);
     }
+    
+    // Setup drag and drop for date view
+    drag.setupDateViewDragDrop();
 }
 
 // Create a task element for list view
@@ -313,6 +335,10 @@ export function createDateViewTaskElement(task) {
     taskElement.className = 'task date-view-task';
     taskElement.dataset.taskId = task.id;
     
+    // Date view task structure with date on left, content on right
+    const taskRow = document.createElement('div');
+    taskRow.className = 'date-view-task-row';
+    
     // List label
     const listLabel = document.createElement('div');
     listLabel.className = 'task-list-label';
@@ -323,9 +349,9 @@ export function createDateViewTaskElement(task) {
     const taskContent = document.createElement('div');
     taskContent.className = 'task-content';
     
-    // Task icon
+    // Task icon (make bigger for date view)
     const taskIcon = document.createElement('div');
-    taskIcon.className = 'task-icon';
+    taskIcon.className = 'task-icon date-view-icon';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
     // Icon click toggles completion
@@ -334,6 +360,10 @@ export function createDateViewTaskElement(task) {
         taskManager.toggleTaskCompletion(task.id);
         renderCurrentView();
     });
+    
+    // Task info container (task name and task time)
+    const taskInfo = document.createElement('div');
+    taskInfo.className = 'task-info';
     
     // Task text
     const taskText = document.createElement('div');
@@ -347,12 +377,14 @@ export function createDateViewTaskElement(task) {
         taskTime.textContent = task.dueTime;
     }
     
+    taskInfo.appendChild(taskText);
+    
     taskContent.appendChild(taskIcon);
-    taskContent.appendChild(taskText);
+    taskContent.appendChild(taskInfo);
+    taskContent.appendChild(taskTime);
     
     taskElement.appendChild(listLabel);
     taskElement.appendChild(taskContent);
-    taskElement.appendChild(taskTime);
     
     // Set up touch handling for this task
     drag.setupTaskTouchHandling(taskElement, task);
@@ -436,7 +468,7 @@ export function showTaskModal(task = null) {
         customTimeInput.value = '';
         
         // Show create button, hide save button
-        createTaskBtn.style.display = 'block';
+        createTaskBtn.style.display = 'inline-block';
         saveTaskBtn.style.display = 'none';
         
         // Set default list to first list (or uncategorized)
@@ -455,6 +487,7 @@ export function showTaskModal(task = null) {
 export function hideTaskModal() {
     elements.taskModal.classList.remove('active');
     elements.taskModal.classList.remove('expanded');
+    elements.taskModal.classList.remove('minimized');
     state.editingTask = null;
 }
 
@@ -688,6 +721,62 @@ export function createTaskInList(listId) {
 
     // Get time
     dueTime = document.getElementById('custom-time').value;
+    
+    // Create new task
+    taskManager.createTask({
+        name: taskName,
+        icon,
+        dueDate,
+        dueTime,
+        listId
+    });
+    
+    hideTaskModal();
+    renderCurrentView();
+}
+
+// Create task with specific date (from dragging to date view)
+export function createTaskWithDate(dateText) {
+    const taskName = document.getElementById('task-name').value.trim();
+    const activeIconBtn = document.querySelector('.icon-btn.active');
+    const icon = activeIconBtn ? activeIconBtn.dataset.icon : 'fa-tasks';
+    
+    // Get time
+    const dueTime = document.getElementById('custom-time').value;
+    
+    // Use selected list, or default to Uncategorized
+    let listId = document.getElementById('list-select').value;
+    if (!listId) {
+        listId = state.uncategorizedListId;
+    }
+    
+    // Convert date text to actual date
+    let dueDate = null;
+    if (dateText === 'Today') {
+        dueDate = new Date().toISOString().split('T')[0];
+    } else if (dateText === 'Tomorrow') {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dueDate = tomorrow.toISOString().split('T')[0];
+    } else if (dateText !== 'No Due Date') {
+        // Try to parse the date
+        try {
+            const dateParts = dateText.split(' ');
+            const monthName = dateParts[1];
+            const day = parseInt(dateParts[2]);
+            const year = new Date().getFullYear();
+            
+            const months = {
+                'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+                'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+            };
+            
+            const dateObj = new Date(year, months[monthName], day);
+            dueDate = dateObj.toISOString().split('T')[0];
+        } catch (e) {
+            console.error('Error parsing date', e);
+        }
+    }
     
     // Create new task
     taskManager.createTask({

@@ -233,18 +233,40 @@ body {
     display: flex;
 }
 
-/* Date View Task Style */
+/* Date View Task Style - Updated for new layout */
 .date-view-tasks {
     flex-direction: column;
 }
 
+.date-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.date-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 15px;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 5;
+    width: 120px;
+    float: left;
+    clear: left;
+}
+
 .date-view-task {
-    width: 100%;
+    width: calc(100% - 130px);
     display: flex;
     flex-direction: column;
     background-color: #fff !important;
     border: 1px solid #eee;
     padding: 12px;
+    margin-left: 130px;
+    margin-bottom: 8px;
 }
 
 .task-list-label {
@@ -256,13 +278,27 @@ body {
 .task-content {
     display: flex;
     align-items: center;
+    width: 100%;
+}
+
+.date-view-icon {
+    font-size: 1.4rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-info {
+    flex-grow: 1;
 }
 
 .task-time {
     color: #888;
     font-size: 0.8rem;
-    margin-left: 40px;
-    margin-top: 5px;
+    margin-left: auto;
+    white-space: nowrap;
 }
 
 /* Filter by Date Tags */
@@ -303,14 +339,6 @@ body {
 /* Due Date View Styles */
 .date-group {
     margin-bottom: 20px;
-}
-
-.date-heading {
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 10px 0;
-    border-bottom: 2px solid #eee;
-    margin-bottom: 10px;
 }
 
 /* Modal Styles */
@@ -457,7 +485,7 @@ body {
     color: white;
 }
 
-/* Icon Selector */
+/* Icon Selector - Reduced size */
 .icon-selector {
     margin-bottom: 20px;
 }
@@ -469,20 +497,21 @@ body {
 }
 
 .icon-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
+    display: inline-grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    vertical-align: middle;
+    width: calc(100% - 140px);
 }
 
 .icon-btn, .list-icon-btn {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -631,7 +660,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* Task creation bottom sheet */
+/* Task creation bottom sheet - Updated for compact mode */
 #task-modal {
     justify-content: flex-end;
     align-items: flex-end;
@@ -653,8 +682,15 @@ body {
     transform: translateY(0);
 }
 
+/* Expanded and minimized states for task modal */
 #task-modal.expanded .modal-content {
-    height: 75vh; /* Expanded height when dragged up */
+    height: 75vh;
+}
+
+#task-modal.minimized .modal-content {
+    height: auto;
+    max-height: 200px;
+    padding-bottom: 10px;
 }
 
 .modal-drag-handle {
@@ -690,7 +726,10 @@ body {
 }
 
 .create-task-btn {
-    width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    width: 130px;
+    margin-left: 10px;
     padding: 12px;
     background-color: #007bff;
     color: white;
@@ -699,7 +738,7 @@ body {
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 0;
     cursor: grab;
 }
 
@@ -728,6 +767,15 @@ body {
     .modal-content {
         width: 95%;
         padding: 15px;
+    }
+    
+    .date-heading {
+        width: 100px;
+    }
+    
+    .date-view-task {
+        width: calc(100% - 110px);
+        margin-left: 110px;
     }
 }
 
