@@ -52,6 +52,23 @@ body {
     background-color: #f0f0f0;
 }
 
+.header-btn.drop-target {
+    background-color: #ffebee;
+    color: #ef4444;
+    animation: pulse 1.5s infinite;
+}
+
+.header-btn.drag-over {
+    background-color: #ef4444;
+    color: white;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
 .view-switcher {
     display: flex;
     background-color: #f0f0f0;
@@ -95,7 +112,6 @@ body {
 .list-header {
     padding: 12px 15px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     background-color: #f9f9f9;
     border-bottom: 1px solid #eee;
@@ -105,20 +121,13 @@ body {
 .list-icon {
     font-size: 1.1rem;
     margin-right: 10px;
-    width: 25px;
-    text-align: center;
     color: #555;
-}
-
-.list-header-content {
-    display: flex;
-    align-items: center;
-    flex: 1;
 }
 
 .list-title {
     font-weight: 600;
     font-size: 1.1rem;
+    flex-grow: 1;
 }
 
 .list-toggle {
@@ -127,6 +136,7 @@ body {
     cursor: pointer;
     font-size: 1rem;
     color: #777;
+    pointer-events: none; /* Let the clicks pass through to the header */
 }
 
 .tasks {
@@ -137,46 +147,42 @@ body {
 }
 
 .task {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    padding: 10px 15px;
+    padding: 12px 15px;
     border-radius: 8px;
     background-color: #f9f9f9;
     cursor: pointer;
     transition: background-color 0.2s;
     position: relative;
-    width: auto;
-    max-width: 100%;
-}
-
-/* Due date color classes */
-.task.due-today {
-    background-color: #fef2f2;
-    border-left: 3px solid #ef4444;
-}
-
-.task.due-tomorrow {
-    background-color: #fff7ed;
-    border-left: 3px solid #f97316;
-}
-
-.task.due-week {
-    background-color: #ecfdf5;
-    border-left: 3px solid #10b981;
-}
-
-.task.due-later {
-    background-color: #f0f9ff;
-    border-left: 3px solid #3b82f6;
-}
-
-.task.due-no-date {
-    background-color: #f3f4f6;
-    border-left: 3px solid #6b7280;
+    flex: 0 1 auto;
+    margin-right: 8px;
+    margin-bottom: 8px;
 }
 
 .task:hover {
-    filter: brightness(0.97);
+    background-color: #f0f0f0;
+}
+
+/* Task color based on due date */
+.task.today {
+    background-color: #fef2f2;
+}
+
+.task.tomorrow {
+    background-color: #fff7ed;
+}
+
+.task.week {
+    background-color: #ecfdf5;
+}
+
+.task.later {
+    background-color: #f0f9ff;
+}
+
+.task.no-date {
+    background-color: #f9f9f9;
 }
 
 .task-icon {
@@ -185,6 +191,16 @@ body {
     width: 25px;
     text-align: center;
     color: #555;
+    cursor: pointer;
+}
+
+.task-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid #ccc;
+    margin-right: 15px;
     cursor: pointer;
 }
 
@@ -199,14 +215,9 @@ body {
 
 .task-text {
     font-size: 0.95rem;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.task-time {
-    font-size: 0.8rem;
-    color: #888;
-    margin-left: 10px;
 }
 
 .task-date {
@@ -214,11 +225,44 @@ body {
     font-size: 0.8rem;
     color: #888;
     margin-top: 5px;
+    margin-left: 10px;
     gap: 5px;
 }
 
 .task.show-date .task-date {
     display: flex;
+}
+
+/* Date View Task Style */
+.date-view-tasks {
+    flex-direction: column;
+}
+
+.date-view-task {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff !important;
+    border: 1px solid #eee;
+    padding: 12px;
+}
+
+.task-list-label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+}
+
+.task-time {
+    color: #888;
+    font-size: 0.8rem;
+    margin-left: 40px;
+    margin-top: 5px;
 }
 
 /* Filter by Date Tags */
@@ -269,58 +313,6 @@ body {
     margin-bottom: 10px;
 }
 
-.date-tasks {
-    padding: 0 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.date-task {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    border-left: 3px solid #eee;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.date-task-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    color: #666;
-    font-size: 0.8rem;
-}
-
-.date-task-list-name {
-    font-weight: 600;
-}
-
-.date-task-time {
-    color: #888;
-}
-
-.date-task-content {
-    display: flex;
-    align-items: center;
-}
-
-.date-task-icon {
-    font-size: 1.1rem;
-    margin-right: 15px;
-    width: 25px;
-    text-align: center;
-    color: #555;
-}
-
-.date-task-text {
-    font-size: 0.95rem;
-    flex: 1;
-}
-
 /* Modal Styles */
 .modal {
     display: none;
@@ -354,6 +346,7 @@ body {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     padding-bottom: 30px;
+    overflow-y: auto;
 }
 
 .modal-content h2 {
@@ -400,6 +393,20 @@ body {
     background-color: #007bff;
     color: white;
     border-color: #007bff;
+}
+
+.date-inputs-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.date-inputs-container input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
 }
 
 .list-filter-options {
@@ -463,14 +470,12 @@ body {
 
 .icon-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     margin-bottom: 15px;
-    max-height: 200px;
-    overflow-y: auto;
 }
 
-.icon-btn {
+.icon-btn, .list-icon-btn {
     width: 100%;
     padding: 12px;
     background-color: #f9f9f9;
@@ -483,13 +488,14 @@ body {
     align-items: center;
 }
 
-.icon-btn.active {
+.icon-btn.active, .list-icon-btn.active {
     background-color: #007bff;
     color: white;
     border-color: #007bff;
 }
 
-.date-selector input[type="date"] {
+.date-selector input[type="date"], 
+.date-selector input[type="time"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -507,10 +513,14 @@ body {
 }
 
 /* Floating Action Button */
-.fab {
+.fab-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
+    z-index: 50;
+}
+
+.fab {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -523,11 +533,58 @@ body {
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 50;
 }
 
 .fab:active {
     transform: scale(0.95);
+}
+
+.fab-options {
+    position: absolute;
+    bottom: 75px;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fab-container:hover .fab-options,
+.fab-container:focus-within .fab-options,
+.fab-container.show-options .fab-options {
+    display: flex;
+}
+
+.fab-option-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #333;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.fab-option-btn span {
+    position: absolute;
+    right: 60px;
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.fab-option-btn:hover span {
+    opacity: 1;
 }
 
 /* Deleted Tasks History */
@@ -578,11 +635,6 @@ body {
 #task-modal {
     justify-content: flex-end;
     align-items: flex-end;
-    transition: opacity 0.3s ease;
-}
-
-#task-modal.active {
-    display: flex;
 }
 
 #task-modal .modal-content {
@@ -591,19 +643,18 @@ body {
     width: 100%;
     max-width: 100%;
     transform: translateY(100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, height 0.3s ease;
+    height: auto; 
     position: relative;
-    padding-top: 30px; /* Space for the drag handle */
-    display: flex;
-    flex-direction: column;
+    padding-top: 40px; /* Space for the drag handle */
 }
 
 #task-modal.active .modal-content {
     transform: translateY(0);
 }
 
-#task-modal.expanded .modal-content .expanded-options {
-    display: block;
+#task-modal.expanded .modal-content {
+    height: 75vh; /* Expanded height when dragged up */
 }
 
 .modal-drag-handle {
@@ -615,12 +666,27 @@ body {
     height: 4px;
     background-color: #ddd;
     border-radius: 4px;
-    cursor: pointer;
+    cursor: ns-resize;
 }
 
 .expanded-options {
     display: none;
-    margin-top: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#task-modal.expanded .expanded-options {
+    display: block;
+    opacity: 1;
+}
+
+#task-name {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
 }
 
 .create-task-btn {
@@ -639,115 +705,6 @@ body {
 
 .create-task-btn:active {
     cursor: grabbing;
-}
-
-/* Delete zone styles */
-.delete-zone {
-    position: fixed;
-    bottom: -100px;
-    left: 0;
-    width: 100%;
-    height: 80px;
-    background-color: rgba(239, 68, 68, 0.9);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: bottom 0.3s ease;
-    z-index: 75;
-    border-radius: 20px 20px 0 0;
-    opacity: 0;
-}
-
-.delete-zone.active {
-    bottom: 0;
-    opacity: 1;
-}
-
-.delete-zone-icon {
-    font-size: 1.5rem;
-    margin-right: 10px;
-}
-
-/* FAB hover buttons */
-.fab-menu {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    display: none;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-    z-index: 45;
-}
-
-.fab-menu.active {
-    display: flex;
-}
-
-.fab-action {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    background-color: white;
-    color: #007bff;
-    border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.fab-action.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.fab-action i {
-    margin-right: 8px;
-}
-
-/* Create popup modal adjustments */
-.create-modal-minimized {
-    height: auto !important;
-    padding-bottom: 20px;
-}
-
-.time-selector {
-    margin-top: 15px;
-}
-
-.time-selector h3 {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: #555;
-}
-
-.time-selector input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 0.9rem;
-}
-
-/* Enhanced icon grid with more options */
-.icon-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-/* Dragging styles */
-.dragging {
-    opacity: 0.7;
-    position: fixed;
-    pointer-events: none;
-    z-index: 999;
 }
 
 /* Empty list message */
@@ -789,4 +746,10 @@ body {
 
 .task.just-completed {
     animation: taskComplete 0.5s ease;
+}
+
+/* Phantom task when dragging */
+.phantom-task {
+    width: auto;
+    max-width: 250px;
 }
