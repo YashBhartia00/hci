@@ -1,0 +1,73 @@
+
+3
+2B Milestone: Consolidated Design and Rationale 
+Overview 
+Our low-fidelity prototype combines a flexible task organization system with multiple views and 
+simplified interactions. The design is driven by the principle that tasks are “first-class objects” - 
+modifiable, movable, and easy to interact with. The interface supports both list-based and due 
+date based organization. Helena’s design reflected structure, nesting, navigation, and easy task 
+creation. Max’s idea of icons only tasks inspired a lot of task creation processes. Yash had the 
+idea of task representation in multiple ways, leading us to develop tasks as objects that can be 
+moved around, leading us to treating them as objects with properties instead of text. 
+Primary Views 
+List View: Tasks are organized by lists, where each list can be expanded or collapsed. Nested 
+tasks reside within each list, this view was inspired by the need for a clear categorization system 
+discussed in our initial designs. The nesting was reflected in all of our designs but the final idea 
+was based on Helena’s idea with added icons.  
+Due Date View: Tasks are displayed chronologically in a calendar-like format, similar to Google 
+Calendar. This view allows users to quickly assess their workload based on deadlines. But since 
+tasks are objects that can be moved around, Laura (student persona) can move the task by 
+dragging to change the deadlines easily.  
+Task Representation 
+Task as First-Class Objects: Every task is a self-contained object that can be created, 
+modified, and moved independently. The tasks are presented with an icon, followed by the task 
+name, all enclosed in a rounded boundary. This presentation enables clear visual separation 
+and visual prioritization even when multiple tasks appear on a single line. Taking inspiration 
+from Max’s initial approach of using only icons and Yash’s idea of combining icons with text. 
+Letting the user (most likely Stacy, casual persona) create very small task names or just use 
+icons as tasks. 
+ 
+Interaction: Clicking on a task’s icon immediately crosses it out, providing instant visual 
+feedback.  Tasks can be easily reorganized within or across lists via drag-and-drop. This reflects 
+our decision to treat tasks as independent objects (further explained in task creation and 
+modification).  
+Top Navigation and Action Elements 
+History (Delete) Button: Tasks dragged onto the delete button (which doubles as a history 
+icon) are removed from the active list but retained in a history log for potential recovery. This 
+concept mirrors a computer’s recycle bin and was refined through team discussions. T To delete 
+a task, users simply drag it onto the icon. To recover deleted tasks, they can click the bin icon, 
+prompting a pop-up displaying the deleted tasks. 
+Filter Button: A dedicated filter button opens a pop-up that allows users to refine their task view 
+by due date, list, priority, and more.  
+View Switcher: Centrally located at the top of the interface, this control allows users to easily 
+switch between the List View and Due Date View. This solution came from extensive debates 
+over screen real estate, with the team agreeing that a minimal yet functional navigation system 
+was optimal. 
+Floating Action Button: Positioned at the bottom-right corner, the floating action button is 
+designed to be unobtrusive while remaining easily accessible. A single tap opens a 
+bottom-sheet for quick creation of a new task, whereas a long press provides the option to 
+create a new list.  
+Task Creation & Modification 
+Bottom-Sheet Creation Panel: The panel slides up from the bottom when creating or editing a 
+task. It includes fields for Task Name, Icon Selection, and Date/Time Picker. This design draws 
+inspiration from Google Tasks and ensures that users maintain context by keeping the main 
+interface visible during the process. 
+Drag-and-Drop List Organization: Users can immediately drag a newly created task into the 
+desired list, addressing user feedback about the difficulties of reorganizing tasks across multiple 
+screens. 
+Quick Task Creation: For users who prefer minimal input, a task can be created with just an 
+icon and later organized into a list. This fast-track creation method supports users who work with 
+minimalist or symbolic task representations.  
+Addressing User and Task Constraints 
+Laura (Busy Student): 
+●  Urgent tasks are easily recognizable with red indicators. 
+●  The icon-plus-text approach allows detailed task descriptions. 
+●  Flexible drag-and-drop functionality accommodates shifting deadlines.  
+Mark (Professional with Multiple Lists): 
+●  Multiple lists are seamlessly managed with easy switching between views. 
+●  Drag-and-drop reordering helps maintain productivity. 
+●  Color-coding by due date simplifies priority management.  
+Stacy (Home-Based User with Simpler Tasks): 
+●  Minimalist task creation (icon-only option) caters to users who prefer simplicity. 
+●  The bottom-sheet creation panel is less intimidating and keeps the interface uncluttered. 
+●  Overall design supports quick interactions without overwhelming details. 
