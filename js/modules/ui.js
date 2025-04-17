@@ -144,25 +144,25 @@ export function renderListView() {
     state.lists.forEach(list => {
         // Create list container
         const listElement = document.createElement('div');
-        listElement.className = 'list';
+        listElement.className = 'list card mb-4';
         listElement.dataset.listId = list.id;
         
         // Create list header
         const listHeader = document.createElement('div');
-        listHeader.className = 'list-header';
+        listHeader.className = 'list-header card-header py-3';
         
         // Add list icon
-        const listIcon = document.createElement('div');
-        listIcon.className = 'list-icon';
+        const listIcon = document.createElement('span');
+        listIcon.className = 'list-icon icon is-small mr-2';
         listIcon.innerHTML = `<i class="fas ${list.icon || 'fa-list'}"></i>`;
         
-        const listTitle = document.createElement('div');
-        listTitle.className = 'list-title';
+        const listTitle = document.createElement('p');
+        listTitle.className = 'list-title card-header-title p-0 is-flex-grow-1';
         listTitle.textContent = list.name;
         
         const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'list-toggle';
-        toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        toggleBtn.className = 'list-toggle card-header-icon p-0';
+        toggleBtn.innerHTML = '<span class="icon"><i class="fas fa-chevron-down"></i></span>';
         
         listHeader.appendChild(listIcon);
         listHeader.appendChild(listTitle);
@@ -171,7 +171,7 @@ export function renderListView() {
         
         // Create tasks container
         const tasksContainer = document.createElement('div');
-        tasksContainer.className = 'tasks';
+        tasksContainer.className = 'tasks card-content p-3 is-flex is-flex-wrap-wrap';
         
         // Filter tasks for this list
         const listTasks = taskManager.getFilteredTasks().filter(task => task.listId === list.id);
@@ -180,17 +180,12 @@ export function renderListView() {
         listHeader.addEventListener('click', () => {
             tasksContainer.style.display = tasksContainer.style.display === 'none' ? 'flex' : 'none';
             toggleBtn.innerHTML = tasksContainer.style.display === 'none' ? 
-                '<i class="fas fa-chevron-down"></i>' : 
-                '<i class="fas fa-chevron-up"></i>';
+                '<span class="icon"><i class="fas fa-chevron-down"></i></span>' : 
+                '<span class="icon"><i class="fas fa-chevron-up"></i></span>';
         });
         
         if (listTasks.length === 0) {
-            const emptyMessage = document.createElement('div');
-            emptyMessage.className = 'empty-list-message';
-            emptyMessage.textContent = 'No tasks in this list';
-            emptyMessage.style.padding = '10px 15px';
-            emptyMessage.style.color = '#999';
-            emptyMessage.style.fontStyle = 'italic';
+            const emptyMessage = createEmptyStateMessage('No tasks in this list');
             tasksContainer.appendChild(emptyMessage);
             
             // Empty lists default to collapsed
@@ -223,24 +218,29 @@ export function renderDateView() {
     // Create date groups
     for (const [dateKey, tasks] of Object.entries(groupedTasks)) {
         const dateGroup = document.createElement('div');
-        dateGroup.className = 'date-group';
+        dateGroup.className = 'date-group mb-5';
         
         // Create date heading
         const dateHeading = document.createElement('div');
-        dateHeading.className = 'date-heading';
+        dateHeading.className = 'date-heading has-background-white is-size-6 has-text-weight-semibold';
         
         let dateText;
+        let tagClass = '';
         if (dateKey === 'no-date') {
             dateText = 'No Due Date';
+            tagClass = 'has-text-grey';
         } else if (utils.isToday(new Date(dateKey))) {
             dateText = 'Today';
+            tagClass = 'has-text-danger';
         } else if (utils.isTomorrow(new Date(dateKey))) {
             dateText = 'Tomorrow';
+            tagClass = 'has-text-warning';
         } else {
             dateText = utils.formatDate(new Date(dateKey));
+            tagClass = 'has-text-info';
         }
         
-        dateHeading.textContent = dateText;
+        dateHeading.innerHTML = `<span class="${tagClass}">${dateText}</span>`;
         dateGroup.appendChild(dateHeading);
         
         // Create tasks container
@@ -248,10 +248,15 @@ export function renderDateView() {
         tasksContainer.className = 'tasks date-view-tasks';
         
         // Add tasks to the container
-        tasks.forEach(task => {
-            const taskElement = createDateViewTaskElement(task);
-            tasksContainer.appendChild(taskElement);
-        });
+        if (tasks.length === 0) {
+            const emptyMessage = createEmptyStateMessage('No tasks due on this date');
+            tasksContainer.appendChild(emptyMessage);
+        } else {
+            tasks.forEach(task => {
+                const taskElement = createDateViewTaskElement(task);
+                tasksContainer.appendChild(taskElement);
+            });
+        }
         
         dateGroup.appendChild(tasksContainer);
         elements.dateGroupsContainer.appendChild(dateGroup);
@@ -558,20 +563,33 @@ export function showFilterModal() {
     
     state.lists.forEach(list => {
         const option = document.createElement('div');
-        option.className = 'list-filter-option';
+        option.className = 'list-filter-option field';
+        
+        const control = document.createElement('div');
+        control.className = 'control';
+        
+        const label = document.createElement('label');
+        label.className = 'checkbox';
         
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = `filter-list-${list.id}`;
         checkbox.value = list.id;
+        checkbox.className = 'mr-2';
         checkbox.checked = state.filters.lists.includes(list.id);
         
-        const label = document.createElement('label');
-        label.htmlFor = `filter-list-${list.id}`;
-        label.textContent = list.name;
+        const labelIcon = document.createElement('span');
+        labelIcon.className = 'icon is-small mr-1';
+        labelIcon.innerHTML = `<i class="fas ${list.icon || 'fa-list'}"></i>`;
         
-        option.appendChild(checkbox);
-        option.appendChild(label);
+        const labelText = document.createTextNode(list.name);
+        
+        label.appendChild(checkbox);
+        label.appendChild(labelIcon);
+        label.appendChild(labelText);
+        
+        control.appendChild(label);
+        option.appendChild(control);
         listFilterOptions.appendChild(option);
     });
     
@@ -695,6 +713,32 @@ export function resetFilters() {
 // Create a task from the modal (without dragging)
 export function createTaskFromModal() {
     const taskName = document.getElementById('task-name').value.trim();
+    if (!taskName) {
+        // Show validation error using Bulma's notification
+        const notification = document.createElement('div');
+        notification.className = 'notification is-danger is-light';
+        notification.innerHTML = '<button class="delete"></button><p>Please enter a task name.</p>';
+        
+        document.querySelector('.task-modal-content').insertBefore(
+            notification, 
+            document.querySelector('#task-name').parentNode.parentNode.nextSibling
+        );
+        
+        // Add close button functionality
+        notification.querySelector('.delete').addEventListener('click', function() {
+            notification.remove();
+        });
+        
+        // Auto close after 3 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+        
+        return;
+    }
+    
     const activeIconBtn = document.querySelector('.icon-btn.active');
     const icon = activeIconBtn ? activeIconBtn.dataset.icon : 'fa-tasks';
     
@@ -709,11 +753,11 @@ export function createTaskFromModal() {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             dueDate = tomorrow.toISOString().split('T')[0];
-        }
-    } else {
-        const customDate = document.getElementById('custom-date').value;
-        if (customDate) {
-            dueDate = customDate;
+        } else if (activeDateBtn.dataset.date === 'custom') {
+            const customDate = document.getElementById('custom-date').value;
+            if (customDate) {
+                dueDate = customDate;
+            }
         }
     }
     
@@ -945,4 +989,23 @@ export function hideFilterModal() {
 // Hide history modal
 export function hideHistoryModal() {
     elements.historyModal.classList.remove('active');
+}
+
+// Create empty state message with Bulma classes
+function createEmptyStateMessage(message) {
+    const container = document.createElement('div');
+    container.className = 'has-text-centered py-4 is-flex-grow-1';
+    
+    const icon = document.createElement('span');
+    icon.className = 'icon is-large has-text-grey-light mb-2';
+    icon.innerHTML = '<i class="fas fa-tasks fa-2x"></i>';
+    
+    const text = document.createElement('p');
+    text.className = 'has-text-grey is-italic';
+    text.textContent = message;
+    
+    container.appendChild(icon);
+    container.appendChild(text);
+    
+    return container;
 }

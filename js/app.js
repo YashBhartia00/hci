@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // History Modal
         document.getElementById('close-history').addEventListener('click', ui.hideHistoryModal);
 
-        // Close modals when clicking outside
+        // Close modals when clicking outside or on close buttons
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal') && e.target.classList.contains('active')) {
                 ui.hideModals();
@@ -88,6 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target !== elements.fab && !elements.fab.contains(e.target)) {
                 elements.fab.parentElement.classList.remove('show-options');
             }
+        });
+
+        // Add event listeners to close modal buttons
+        document.querySelectorAll('.modal-close, .modal .delete').forEach(button => {
+            button.addEventListener('click', ui.hideModals);
         });
 
         // Handle icon selection
