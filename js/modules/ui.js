@@ -280,8 +280,8 @@ export function createTaskElement(task) {
     }
     
     // Task icon
-    const taskIcon = document.createElement('div');
-    taskIcon.className = 'task-icon';
+    const taskIcon = document.createElement('span');
+    taskIcon.className = 'task-icon icon';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
     // Icon click toggles completion
@@ -292,13 +292,13 @@ export function createTaskElement(task) {
     });
     
     // Task text
-    const taskText = document.createElement('div');
+    const taskText = document.createElement('span');
     taskText.className = 'task-text';
     taskText.textContent = task.name;
     
     // Task date/time display (initially hidden)
     const taskDate = document.createElement('div');
-    taskDate.className = 'task-date';
+    taskDate.className = 'task-date tags';
     
     if (task.dueDate) {
         let dateDisplay = '';
@@ -314,9 +314,9 @@ export function createTaskElement(task) {
             dateDisplay += ' ' + task.dueTime;
         }
         
-        taskDate.innerHTML = `<span class="date-tag ${utils.getDateColorClass(task.dueDate)}">${dateDisplay}</span>`;
+        taskDate.innerHTML = `<span class="date-tag tag ${utils.getDateColorClass(task.dueDate)}">${dateDisplay}</span>`;
     } else {
-        taskDate.innerHTML = '<span class="date-tag no-date">No Date</span>';
+        taskDate.innerHTML = '<span class="date-tag tag no-date">No Date</span>';
     }
     
     taskElement.appendChild(taskIcon);
@@ -332,26 +332,27 @@ export function createTaskElement(task) {
 // Create a task element for date view
 export function createDateViewTaskElement(task) {
     const taskElement = document.createElement('div');
-    taskElement.className = 'task date-view-task';
+    taskElement.className = 'task date-view-task box p-3';
     taskElement.dataset.taskId = task.id;
     
-    // Date view task structure with date on left, content on right
-    const taskRow = document.createElement('div');
-    taskRow.className = 'date-view-task-row';
-    
-    // List label
+    // List label with tag
     const listLabel = document.createElement('div');
-    listLabel.className = 'task-list-label';
+    listLabel.className = 'task-list-label mb-1';
     const list = listManager.getListById(task.listId);
-    listLabel.textContent = list ? list.name : 'Unknown List';
+    
+    const listTag = document.createElement('span');
+    listTag.className = 'tag is-light is-small';
+    listTag.innerHTML = `<span class="icon is-small"><i class="fas ${list?.icon || 'fa-list'}"></i></span>
+                        <span>${list ? list.name : 'Unknown List'}</span>`;
+    listLabel.appendChild(listTag);
     
     // Task content
     const taskContent = document.createElement('div');
-    taskContent.className = 'task-content';
+    taskContent.className = 'task-content is-flex is-align-items-center';
     
-    // Task icon (make bigger for date view)
+    // Task icon
     const taskIcon = document.createElement('div');
-    taskIcon.className = 'task-icon date-view-icon';
+    taskIcon.className = 'task-icon date-view-icon icon is-medium';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
     // Icon click toggles completion
@@ -361,9 +362,9 @@ export function createDateViewTaskElement(task) {
         renderCurrentView();
     });
     
-    // Task info container (task name and task time)
+    // Task info container
     const taskInfo = document.createElement('div');
-    taskInfo.className = 'task-info';
+    taskInfo.className = 'task-info is-flex-grow-1 ml-2';
     
     // Task text
     const taskText = document.createElement('div');
@@ -372,9 +373,9 @@ export function createDateViewTaskElement(task) {
     
     // Task time
     const taskTime = document.createElement('div');
-    taskTime.className = 'task-time';
+    taskTime.className = 'task-time has-text-grey is-size-7';
     if (task.dueTime) {
-        taskTime.textContent = task.dueTime;
+        taskTime.innerHTML = `<span class="icon is-small mr-1"><i class="fas fa-clock"></i></span>${task.dueTime}`;
     }
     
     taskInfo.appendChild(taskText);
@@ -589,40 +590,46 @@ export function showHistoryModal() {
     elements.deletedTasksContainer.innerHTML = '';
     
     if (state.deletedTasks.length === 0) {
-        elements.deletedTasksContainer.innerHTML = '<p style="text-align: center; color: #999;">No deleted tasks</p>';
+        elements.deletedTasksContainer.innerHTML = '<p class="has-text-centered has-text-grey is-italic py-4">No deleted tasks</p>';
         return;
     }
     
     state.deletedTasks.forEach(task => {
         const deletedTaskElement = document.createElement('div');
-        deletedTaskElement.className = 'deleted-task';
+        deletedTaskElement.className = 'deleted-task media py-2 px-3';
         
         const taskInfo = document.createElement('div');
-        taskInfo.className = 'deleted-task-info';
+        taskInfo.className = 'media-left';
         
-        const taskIcon = document.createElement('div');
-        taskIcon.className = 'deleted-task-icon';
+        const taskIcon = document.createElement('span');
+        taskIcon.className = 'icon';
         taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
         
-        const taskName = document.createElement('div');
+        taskInfo.appendChild(taskIcon);
+        
+        const taskContent = document.createElement('div');
+        taskContent.className = 'media-content';
+        
+        const taskName = document.createElement('p');
+        taskName.className = 'is-size-6';
         taskName.textContent = task.name;
         
-        taskInfo.appendChild(taskIcon);
-        taskInfo.appendChild(taskName);
+        taskContent.appendChild(taskName);
         
         const taskActions = document.createElement('div');
-        taskActions.className = 'deleted-task-actions';
+        taskActions.className = 'media-right buttons are-small';
         
         const restoreButton = document.createElement('button');
-        restoreButton.textContent = 'Restore';
+        restoreButton.className = 'button is-primary is-small is-light';
+        restoreButton.innerHTML = '<span class="icon is-small"><i class="fas fa-undo"></i></span><span>Restore</span>';
         restoreButton.addEventListener('click', () => {
             taskManager.restoreTask(task.id);
             showHistoryModal(); // Refresh the modal
         });
         
         const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.style.color = '#ef4444';
+        deleteButton.className = 'button is-danger is-small is-light';
+        deleteButton.innerHTML = '<span class="icon is-small"><i class="fas fa-trash"></i></span><span>Delete</span>';
         deleteButton.addEventListener('click', () => {
             taskManager.permanentlyDeleteTask(task.id);
             showHistoryModal(); // Refresh the modal
@@ -632,6 +639,7 @@ export function showHistoryModal() {
         taskActions.appendChild(deleteButton);
         
         deletedTaskElement.appendChild(taskInfo);
+        deletedTaskElement.appendChild(taskContent);
         deletedTaskElement.appendChild(taskActions);
         
         elements.deletedTasksContainer.appendChild(deletedTaskElement);
