@@ -47,14 +47,14 @@ function positionCreateTaskButton() {
     
     if (iconGrid && createTaskBtn) {
         // Make the button inline with the icon grid
-        iconGrid.style.display = 'inline-grid';
-        iconGrid.style.verticalAlign = 'middle';
-        iconGrid.style.width = 'calc(100% - 140px)';
+        iconGrid.style.display = 'inline-block';
+        iconGrid.style.width = 'calc(100% - 150px)';
         
         createTaskBtn.style.display = 'inline-block';
-        createTaskBtn.style.verticalAlign = 'middle';
-        createTaskBtn.style.width = '130px';
+        createTaskBtn.style.verticalAlign = 'top';
+        createTaskBtn.style.width = '140px';
         createTaskBtn.style.marginLeft = '10px';
+        createTaskBtn.style.height = '100%';
     }
 }
 
@@ -397,6 +397,20 @@ export function showTaskModal(task = null) {
     const modal = elements.taskModal;
     modal.classList.add('active');
     modal.classList.remove('expanded');
+    modal.classList.remove('minimized');
+    
+    // Make main content visible but modified to accommodate the task panel
+    document.querySelector('.app-container').classList.add('modal-active');
+    
+    // Remove forced fixed positioning
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.style.position = ''; // removed fixed
+    modalContent.style.bottom = '';
+    modalContent.style.left = '';
+    modalContent.style.width = '';
+    modalContent.style.maxHeight = ''; // remove forced 50vh
+    modalContent.style.transform = 'none';
+    modalContent.style.zIndex = '50';
     
     const modalTitle = document.getElementById('task-modal-title');
     const nameInput = document.getElementById('task-name');
@@ -416,17 +430,36 @@ export function showTaskModal(task = null) {
     document.querySelector('.icon-btn[data-icon="fa-tasks"]')?.classList.add('active');
     document.querySelector('.date-btn[data-date="no-date"]')?.classList.add('active');
     
+    // Remove inline styles that forced icon grid to be inline
+    const iconGrid = document.querySelector('.icon-grid');
+    if (iconGrid) {
+        iconGrid.style.display = '';
+        iconGrid.style.width = '';
+        iconGrid.style.verticalAlign = '';
+    }
+    
+    if (createTaskBtn) {
+        createTaskBtn.style.display = '';
+        createTaskBtn.style.width = '';
+        createTaskBtn.style.height = '';
+    }
+    
+    // Show date and time selectors by default
+    const expandedOptions = document.querySelector('.expanded-options');
+    if (expandedOptions) {
+        expandedOptions.style.display = 'block';
+        expandedOptions.style.opacity = '1';
+        expandedOptions.style.marginTop = '15px';
+    }
+    
     if (task) {
         // Editing existing task
         modalTitle.textContent = 'Edit Task';
         nameInput.value = task.name;
         
-        // Show expanded form for editing
-        modal.classList.add('expanded');
-        
         // Hide create button, show save button
         createTaskBtn.style.display = 'none';
-        saveTaskBtn.style.display = 'block';
+        saveTaskBtn.style.display = 'inline-block';
         
         // Set icon
         const iconBtn = document.querySelector(`.icon-btn[data-icon="${task.icon}"]`);
@@ -479,6 +512,12 @@ export function showTaskModal(task = null) {
         state.editingTask = null;
     }
     
+    // Ensure the cancel button is visible
+    const cancelBtn = document.getElementById('cancel-task');
+    if (cancelBtn) {
+        cancelBtn.style.display = 'inline-block';
+    }
+    
     // Focus on the name input
     setTimeout(() => nameInput.focus(), 300);
 }
@@ -486,8 +525,7 @@ export function showTaskModal(task = null) {
 // Hide task modal
 export function hideTaskModal() {
     elements.taskModal.classList.remove('active');
-    elements.taskModal.classList.remove('expanded');
-    elements.taskModal.classList.remove('minimized');
+    document.querySelector('.app-container').classList.remove('modal-active');
     state.editingTask = null;
 }
 

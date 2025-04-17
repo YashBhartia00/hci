@@ -21,6 +21,20 @@ body {
     overflow: hidden;
 }
 
+.app-container.modal-active {
+    padding-bottom: 0; /* Remove padding */
+    transform: none; /* Remove transform */
+    transition: none; /* Remove transition */
+    overflow: hidden; /* Prevent scrolling of main container */
+}
+
+/* Integrated task modal as part of the page instead of overlay */
+.app-container.modal-active {
+    padding-bottom: 280px; /* Adjust based on the task creation form height */
+    transition: padding-bottom 0.3s ease;
+    overflow: auto;
+}
+
 /* Header Styles */
 .header {
     display: flex;
@@ -56,6 +70,8 @@ body {
     background-color: #ffebee;
     color: #ef4444;
     animation: pulse 1.5s infinite;
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
 }
 
 .header-btn.drag-over {
@@ -158,6 +174,9 @@ body {
     flex: 0 1 auto;
     margin-right: 8px;
     margin-bottom: 8px;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    user-select: none;
 }
 
 .task:hover {
@@ -370,10 +389,23 @@ body {
     overflow-y: auto;
 }
 
+/* Update task modal styling for integration */
+#task-modal .modal-content {
+    position: relative; /* Not static or fixed */
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    width: 100%;
+    max-width: 100%;
+    transform: none; /* Remove transform that was on modal-content */
+    height: auto;
+    padding-top: 40px; /* Space for the drag handle */
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .task-modal-content {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
     overflow-y: auto;
 }
 
@@ -487,7 +519,7 @@ body {
 
 /* Icon Selector - Reduced size */
 .icon-selector {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .icon-selector h3, .date-selector h3, .list-selector h3 {
@@ -502,6 +534,13 @@ body {
     gap: 8px;
     vertical-align: middle;
     width: calc(100% - 140px);
+}
+
+/* Fix icon grid and create button layout */
+.icon-grid {
+    display: inline-block;
+    width: calc(100% - 150px);
+    vertical-align: middle;
 }
 
 .icon-btn, .list-icon-btn {
@@ -539,6 +578,10 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 0.9rem;
+}
+
+.date-selector, .list-selector {
+    display: none;
 }
 
 /* Floating Action Button */
@@ -662,24 +705,30 @@ body {
 
 /* Task creation bottom sheet - Updated for compact mode */
 #task-modal {
-    justify-content: flex-end;
-    align-items: flex-end;
+    position: fixed; /* Change from static to fixed */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: block;
+    z-index: 100;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+#task-modal.active {
+    transform: translateY(0);
 }
 
 #task-modal .modal-content {
+    position: relative; /* Not static or fixed */
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     width: 100%;
     max-width: 100%;
-    transform: translateY(100%);
-    transition: transform 0.3s ease, height 0.3s ease;
-    height: auto; 
-    position: relative;
+    transform: none; /* Remove transform that was on modal-content */
+    height: auto;
     padding-top: 40px; /* Space for the drag handle */
-}
-
-#task-modal.active .modal-content {
-    transform: translateY(0);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Expanded and minimized states for task modal */
@@ -716,6 +765,13 @@ body {
     opacity: 1;
 }
 
+/* Always show expanded options in task modal */
+#task-modal .expanded-options {
+    display: block;
+    opacity: 1;
+    margin-top: 15px;
+}
+
 #task-name {
     width: 100%;
     padding: 10px;
@@ -729,7 +785,7 @@ body {
     display: inline-block;
     vertical-align: middle;
     width: 130px;
-    margin-left: 10px;
+    margin-left: 15px;
     padding: 12px;
     background-color: #007bff;
     color: white;
@@ -744,6 +800,14 @@ body {
 
 .create-task-btn:active {
     cursor: grabbing;
+}
+
+/* Fix icon grid and create button layout */
+.create-task-btn {
+    display: inline-block;
+    vertical-align: middle;
+    width: 130px;
+    margin-left: 15px;
 }
 
 /* Empty list message */
@@ -782,7 +846,8 @@ body {
 /* Dragging task styling */
 .task.dragging {
     opacity: 0.8;
-    background-color: #f0f0f0;
+    background-color: #e6f7ff;
+    border: 2px solid #1890ff;
 }
 
 /* Animation for task completion */
@@ -799,5 +864,64 @@ body {
 /* Phantom task when dragging */
 .phantom-task {
     width: auto;
-    max-width: 250px;
+    max-width: 200px;
+    background: #ffffff;
+    border: 2px solid #1890ff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+}
+
+/* Make the date and time selectors appear side by side */
+.date-selector h3, .list-selector h3 {
+    margin-top: 15px;
+}
+
+/* Better positioning for the save and cancel buttons */
+.modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* 1. icon & button side by side, button stretches to grid height */
+.icon-selector-inner {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+.icon-selector-inner .icon-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    gap: 8px;
+}
+.icon-selector-inner .create-task-btn {
+    flex: 0 0 140px;
+    align-self: stretch;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* 2. always show date/time and list selectors when sheet is active */
+#task-modal .date-selector,
+#task-modal .list-selector {
+    display: block !important;
+}
+
+/* 3. remove fixed height */
+/* Fix icon grid and create button layout */
+.create-task-btn {
+    display: inline-block;
+    vertical-align: middle;
+    width: 130px;
+    margin-left: 15px;
+}
+
+/* Force a 3-row layout for icons */
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, auto);
+    grid-gap: 8px;
 }
