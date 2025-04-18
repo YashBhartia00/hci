@@ -306,6 +306,8 @@ export function setupTaskCreateDragging(createTaskBtn) {
 export function setupTaskTouchHandling(taskElement, task) {
     let dragStarted = false;
     let dragGhost = null;
+    let touchStartTime = 0;
+    let isDraggingFromIcon = false;
     
     // Touch events only
     taskElement.addEventListener('touchstart', handleTaskTouchStart, {passive: false});
@@ -313,11 +315,31 @@ export function setupTaskTouchHandling(taskElement, task) {
     // Add explicit icon click handler for touch devices
     const taskIcon = taskElement.querySelector('.task-icon');
     if (taskIcon) {
+        // Replace the old direct click handler with a smarter one that
+        // distinguishes between taps and drags
         taskIcon.addEventListener('touchstart', (e) => {
             e.stopPropagation();
-            e.preventDefault();
-            taskManager.toggleTaskCompletion(task.id);
-            ui.renderCurrentView();
+            touchStartTime = Date.now();
+            isDraggingFromIcon = true;
+            
+            // We'll determine if this was a tap or drag later,
+            // don't immediately mark as complete
+        }, {passive: false});
+        
+        // Add touchend handler specifically for the icon
+        taskIcon.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            
+            // If it was a short touch (tap) and we didn't start dragging, 
+            // then it's a completion action
+            if (touchDuration < 300 && !dragStarted && isDraggingFromIcon) {
+                e.stopPropagation();
+                e.preventDefault();
+                taskManager.toggleTaskCompletion(task.id);
+                ui.renderCurrentView();
+            }
+            
+            isDraggingFromIcon = false;
         }, {passive: false});
     }
     
@@ -330,6 +352,7 @@ export function setupTaskTouchHandling(taskElement, task) {
         startY = clientY;
         dragStarted = false;
         isDragging = false;
+        touchStartTime = Date.now();
         
         // Start long press timer for editing
         longPressTimer = setTimeout(() => {
@@ -417,8 +440,12 @@ export function setupTaskTouchHandling(taskElement, task) {
             elements.deleteBtn.classList.remove('drag-over');
         } else if (!dragStarted) {
             // It was a tap, not a drag
-            taskElement.classList.toggle('show-date');
+            if (!isDraggingFromIcon) { // Only toggle date view if not tapping on icon
+                taskElement.classList.toggle('show-date');
+            }
         }
+        
+        isDraggingFromIcon = false;
     }
     
     function handleTaskDrop(x, y, task) {
