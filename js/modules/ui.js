@@ -284,11 +284,33 @@ export function createTaskElement(task) {
     taskIcon.className = 'task-icon';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
-    // Icon click toggles completion
+    // Icon click toggles completion with immediate visual feedback
     taskIcon.addEventListener('click', (e) => {
         e.stopPropagation();
-        taskManager.toggleTaskCompletion(task.id);
-        renderCurrentView();
+        
+        // Toggle task completion in the data model
+        const updatedTask = taskManager.toggleTaskCompletion(task.id);
+        
+        // Update the visual state immediately before re-rendering
+        if (updatedTask) {
+            const parentTask = taskIcon.closest('.task');
+            if (updatedTask.completed) {
+                parentTask.classList.add('completed');
+            } else {
+                parentTask.classList.remove('completed');
+            }
+            
+            // Add a short animation to indicate completion
+            parentTask.classList.add('just-completed');
+            setTimeout(() => {
+                parentTask.classList.remove('just-completed');
+                // Now render the full view after visual feedback
+                renderCurrentView();
+            }, 300);
+        } else {
+            // Fallback if the task wasn't found
+            renderCurrentView();
+        }
     });
     
     // Task text
@@ -335,6 +357,10 @@ export function createDateViewTaskElement(task) {
     taskElement.className = 'task date-view-task';
     taskElement.dataset.taskId = task.id;
     
+    if (task.completed) {
+        taskElement.classList.add('completed');
+    }
+    
     // Date view task structure with date on left, content on right
     const taskRow = document.createElement('div');
     taskRow.className = 'date-view-task-row';
@@ -354,11 +380,33 @@ export function createDateViewTaskElement(task) {
     taskIcon.className = 'task-icon date-view-icon';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
-    // Icon click toggles completion
+    // Icon click toggles completion with immediate visual feedback
     taskIcon.addEventListener('click', (e) => {
         e.stopPropagation();
-        taskManager.toggleTaskCompletion(task.id);
-        renderCurrentView();
+        
+        // Toggle task completion in the data model
+        const updatedTask = taskManager.toggleTaskCompletion(task.id);
+        
+        // Update the visual state immediately before re-rendering
+        if (updatedTask) {
+            const parentTask = taskIcon.closest('.task');
+            if (updatedTask.completed) {
+                parentTask.classList.add('completed');
+            } else {
+                parentTask.classList.remove('completed');
+            }
+            
+            // Add a short animation to indicate completion
+            parentTask.classList.add('just-completed');
+            setTimeout(() => {
+                parentTask.classList.remove('just-completed');
+                // Now render the full view after visual feedback
+                renderCurrentView();
+            }, 300);
+        } else {
+            // Fallback if the task wasn't found
+            renderCurrentView();
+        }
     });
     
     // Task info container (task name and task time)

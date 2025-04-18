@@ -258,16 +258,17 @@ body {
 }
 
 .date-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Reduced from 20px */
+    border-bottom: #eee 1px solid;
     position: relative;
 }
 
 .date-heading {
     font-size: 1rem;
     font-weight: 600;
-    padding: 10px 15px;
-    border-bottom: 2px solid #eee;
-    margin-bottom: 10px;
+    padding: 8px 15px; /* Reduced padding from 10px to 8px */
+    /* border-bottom: 2px solid #eee; */
+    margin-bottom: 0.2rem; /* Reduced from 0.5rem */
     position: sticky;
     top: 0;
     background-color: #fff;
@@ -278,14 +279,19 @@ body {
 }
 
 .date-view-task {
-    width: calc(100% - 130px);
+    width: calc(100% - 20px);
     display: flex;
     flex-direction: column;
     background-color: #fff !important;
     border: 1px solid #eee;
-    padding: 12px;
-    margin-left: 130px;
-    margin-bottom: 8px;
+    padding: 10px; /* Reduced from 12px */
+    margin-left: 20px;
+    margin-bottom: 6px; /* Reduced from 8px */
+}
+
+/* Additional spacing adjustment */
+.date-group .tasks {
+    margin-top: 0; /* Remove margin above tasks */
 }
 
 .task-list-label {
@@ -738,7 +744,7 @@ body {
 
 #task-modal.minimized .modal-content {
     height: auto;
-    max-height: 200px;
+    max-height: 50px;
     padding-bottom: 10px;
 }
 
@@ -784,8 +790,8 @@ body {
 .create-task-btn {
     display: inline-block;
     vertical-align: middle;
-    width: 130px;
-    margin-left: 15px;
+    width: 110px;
+    margin-left: 25px;
     padding: 12px;
     background-color: #007bff;
     color: white;
@@ -838,8 +844,8 @@ body {
     }
     
     .date-view-task {
-        width: calc(100% - 110px);
-        margin-left: 110px;
+        width: calc(100% - 10px);
+        margin-left: 10px;
     }
 }
 
@@ -893,7 +899,7 @@ body {
 .icon-selector-inner .icon-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(6,1fr);
+    grid-template-columns: repeat(5,1fr);
     gap: 8px;
 }
 .icon-selector-inner .create-task-btn {
@@ -921,7 +927,11 @@ body {
 /* Force a 3-row layout for icons */
 .icon-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, auto);
     grid-gap: 8px;
+}
+
+.date-group .tasks {
+    margin-top: 0.1rem; /* Reduce space above tasks */
 }
