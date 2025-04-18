@@ -7,10 +7,10 @@ import * as ui from './ui.js';
 let isDragging = false;
 let longPressTimer = null;
 let startX, startY;
-const LONG_PRESS_DURATION = 800; // ms
-const DRAG_THRESHOLD = 10; // px
+const LONG_PRESS_DURATION = 800; //ms
+const DRAG_THRESHOLD = 10; //px
 
-// Capture references to DOM elements that might be needed for drag operations
+
 const elements = {
     listView: null,
     dateView: null,
@@ -18,21 +18,21 @@ const elements = {
     taskModal: null
 };
 
-// Initialize drag functionality
+
 export function init(domElements) {
     elements.listView = domElements.listView;
     elements.dateView = domElements.dateView;
     elements.deleteBtn = domElements.deleteBtn;
     elements.taskModal = domElements.taskModal;
 
-    // Set up Sortable for lists container
+    
     setupListSortable();
     
-    // Setup delete button as a drop target for tasks
+    
     setupDeleteDropTarget();
 }
 
-// Setup Sortable.js for lists
+
 export function setupListSortable() {
     const listsContainer = document.getElementById('lists-container');
     if (listsContainer) {
@@ -48,7 +48,7 @@ export function setupListSortable() {
     }
 }
 
-// Setup delete button as drop target
+
 function setupDeleteDropTarget() {
     if (elements.deleteBtn) {
         elements.deleteBtn.addEventListener('dragover', (e) => {
@@ -72,7 +72,7 @@ function setupDeleteDropTarget() {
     }
 }
 
-// Setup Sortable.js for tasks within a list
+
 export function setupTaskSortable(listElement) {
     const tasksContainer = listElement.querySelector('.tasks');
     if (tasksContainer) {
@@ -80,22 +80,22 @@ export function setupTaskSortable(listElement) {
             group: 'tasks',
             animation: 150,
             onStart: function(evt) {
-                // Show delete button with a trash indicator
+                
                 elements.deleteBtn.classList.add('drop-target');
                 
-                // Set data transfer to use with native drop events
+                
                 evt.item.setAttribute('draggable', 'true');
                 evt.item.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', evt.item.dataset.taskId);
                 }, { once: true });
             },
             onMove: function(evt) {
-                // If dragging over a collapsed list, expand it
+                
                 const targetList = evt.to.closest('.list');
                 if (targetList) {
                     const tasksContainer = targetList.querySelector('.tasks');
                     if (tasksContainer && tasksContainer.style.display === 'none') {
-                        // Expand the list
+                        
                         tasksContainer.style.display = 'flex';
                         const toggleBtn = targetList.querySelector('.list-toggle');
                         if (toggleBtn) {
@@ -106,10 +106,10 @@ export function setupTaskSortable(listElement) {
                 return true;
             },
             onEnd: function(evt) {
-                // Hide delete button indicator
+                
                 elements.deleteBtn.classList.remove('drop-target');
                 
-                // Check if ended on delete button
+                
                 const deleteBtn = elements.deleteBtn;
                 const deleteBtnRect = deleteBtn.getBoundingClientRect();
                 const x = evt.originalEvent.clientX;
@@ -117,7 +117,7 @@ export function setupTaskSortable(listElement) {
                 
                 if (x >= deleteBtnRect.left && x <= deleteBtnRect.right && 
                     y >= deleteBtnRect.top && y <= deleteBtnRect.bottom) {
-                    // Delete the task
+                    
                     const taskId = evt.item.dataset.taskId;
                     taskManager.deleteTask(taskId);
                     ui.renderCurrentView();
@@ -133,22 +133,22 @@ export function setupTaskSortable(listElement) {
     }
 }
 
-// Setup task dragging from create button
+
 export function setupTaskCreateDragging(createTaskBtn) {
-    // Focus on touch events only
+    
     createTaskBtn.addEventListener('touchstart', handleTaskDragStart, {passive: false});
 
     function handleTaskDragStart(e) {
         e.preventDefault();
         
-        // Only allow dragging if we have an icon selected
+        
         const activeIconBtn = document.querySelector('.icon-btn.active');
         if (!activeIconBtn) return;
 
         const taskName = document.getElementById('task-name').value.trim();
         const icon = activeIconBtn.dataset.icon || 'fa-tasks';
 
-        // Create phantom element for dragging
+        
         const phantom = document.createElement('div');
         phantom.className = 'task phantom-task';
         phantom.style.position = 'absolute';
@@ -158,31 +158,31 @@ export function setupTaskCreateDragging(createTaskBtn) {
         phantom.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
         phantom.style.transform = 'scale(1.05)';
 
-        // Set position and content
+        
         phantom.innerHTML = `
             <div class="task-icon"><i class="fas ${icon}"></i></div>
             <div class="task-text">${taskName}</div>
         `;
 
-        // Insert phantom element into document
+        
         document.body.appendChild(phantom);
 
-        // Initial position
+        
         const startX = e.touches[0].clientX;
         const startY = e.touches[0].clientY;
         
         let currentX = startX;
         let currentY = startY;
         
-        // Calculate offsets
+        
         const rect = createTaskBtn.getBoundingClientRect();
         const offsetX = startX - rect.left;
         const offsetY = startY - rect.top;
 
-        // Minimize the task modal to show more of the lists
+        
         elements.taskModal.classList.add('minimized');
         
-        // Update phantom position
+        
         function updatePhantomPosition(x, y) {
             phantom.style.left = `${x - offsetX}px`;
             phantom.style.top = `${y - offsetY}px`;
@@ -192,14 +192,14 @@ export function setupTaskCreateDragging(createTaskBtn) {
         
         updatePhantomPosition(startX, startY);
 
-        // Handle drag move
+        
         function handleTaskDragMove(e) {
             e.preventDefault();
             const x = e.touches[0].clientX;
             const y = e.touches[0].clientY;
             updatePhantomPosition(x, y);
             
-            // Highlight delete button if dragging over it
+            
             const deleteBtn = elements.deleteBtn;
             const deleteBtnRect = deleteBtn.getBoundingClientRect();
             if (x >= deleteBtnRect.left && x <= deleteBtnRect.right && 
@@ -209,7 +209,7 @@ export function setupTaskCreateDragging(createTaskBtn) {
                 deleteBtn.classList.remove('drag-over');
             }
             
-            // Check if dragging over a collapsed list to expand it
+            
             const lists = document.querySelectorAll('.list');
             lists.forEach(list => {
                 const rect = list.getBoundingClientRect();
@@ -217,7 +217,7 @@ export function setupTaskCreateDragging(createTaskBtn) {
                     y >= rect.top && y <= rect.bottom) {
                     const tasksContainer = list.querySelector('.tasks');
                     if (tasksContainer && tasksContainer.style.display === 'none') {
-                        // Expand the list
+                        
                         tasksContainer.style.display = 'flex';
                         const toggleBtn = list.querySelector('.list-toggle');
                         if (toggleBtn) {
@@ -228,31 +228,31 @@ export function setupTaskCreateDragging(createTaskBtn) {
             });
         }
 
-        // Handle drag end
+        
         function handleTaskDragEnd(e) {
             document.removeEventListener('touchmove', handleTaskDragMove);
             document.removeEventListener('touchend', handleTaskDragEnd);
 
-            // Remove minimized class from task modal
+            
             elements.taskModal.classList.remove('minimized');
 
-            // Get final touch position
+            
             const finalX = e.changedTouches[0].clientX;
             const finalY = e.changedTouches[0].clientY;
             
-            // Check if we're over the delete button
+            
             const deleteBtn = elements.deleteBtn;
             const deleteBtnRect = deleteBtn.getBoundingClientRect();
             if (finalX >= deleteBtnRect.left && finalX <= deleteBtnRect.right && 
                 finalY >= deleteBtnRect.top && finalY <= deleteBtnRect.bottom) {
-                // Don't create the task as it was "deleted" during creation
+                
                 deleteBtn.classList.remove('drag-over');
                 ui.hideTaskModal();
                 document.body.removeChild(phantom);
                 return;
             }
             
-            // Check if we're over a list
+            
             const lists = document.querySelectorAll('.list');
             let targetList = null;
 
@@ -264,7 +264,7 @@ export function setupTaskCreateDragging(createTaskBtn) {
                 }
             });
             
-            // Check if we're over a date group in date view
+            
             const dateGroups = document.querySelectorAll('.date-group');
             let targetDateGroup = null;
             
@@ -278,60 +278,60 @@ export function setupTaskCreateDragging(createTaskBtn) {
                 });
             }
 
-            // Create task in the target list or with target date
+            
             if (targetList) {
                 const listId = targetList.dataset.listId;
                 ui.createTaskInList(listId);
             } else if (targetDateGroup) {
-                // Extract date from heading
+                
                 const dateHeading = targetDateGroup.querySelector('.date-heading').textContent;
                 ui.createTaskWithDate(dateHeading);
             } else {
-                // Default to first list if not dragged to a specific list
+                
                 ui.createTaskFromModal();
             }
 
-            // Remove phantom element
+            
             document.body.removeChild(phantom);
             deleteBtn.classList.remove('drag-over');
         }
 
-        // Add event listeners for dragging
+        
         document.addEventListener('touchmove', handleTaskDragMove, {passive: false});
         document.addEventListener('touchend', handleTaskDragEnd);
     }
 }
 
-// Setup task item touch handling (click, long press, drag)
+
 export function setupTaskTouchHandling(taskElement, task) {
     let dragStarted = false;
     let dragGhost = null;
     let touchStartTime = 0;
     let isDraggingFromIcon = false;
     
-    // Touch events only
+    
     taskElement.addEventListener('touchstart', handleTaskTouchStart, {passive: false});
     
-    // Add explicit icon click handler for touch devices
+    
     const taskIcon = taskElement.querySelector('.task-icon');
     if (taskIcon) {
-        // Replace the old direct click handler with a smarter one that
-        // distinguishes between taps and drags
+        
+        
         taskIcon.addEventListener('touchstart', (e) => {
             e.stopPropagation();
             touchStartTime = Date.now();
             isDraggingFromIcon = true;
             
-            // We'll determine if this was a tap or drag later,
-            // don't immediately mark as complete
+            
+            
         }, {passive: false});
         
-        // Add touchend handler specifically for the icon
+        
         taskIcon.addEventListener('touchend', (e) => {
             const touchDuration = Date.now() - touchStartTime;
             
-            // If it was a short touch (tap) and we didn't start dragging, 
-            // then it's a completion action
+            
+            
             if (touchDuration < 300 && !dragStarted && isDraggingFromIcon) {
                 e.stopPropagation();
                 e.preventDefault();
@@ -354,7 +354,7 @@ export function setupTaskTouchHandling(taskElement, task) {
         isDragging = false;
         touchStartTime = Date.now();
         
-        // Start long press timer for editing
+        
         longPressTimer = setTimeout(() => {
             if (!dragStarted) {
                 ui.showTaskModal(task);
@@ -371,7 +371,7 @@ export function setupTaskTouchHandling(taskElement, task) {
         const clientX = e.touches[0].clientX;
         const clientY = e.touches[0].clientY;
         
-        // Check if we've moved enough to consider it a drag
+        
         const deltaX = Math.abs(clientX - startX);
         const deltaY = Math.abs(clientY - startY);
         
@@ -379,7 +379,7 @@ export function setupTaskTouchHandling(taskElement, task) {
             dragStarted = true;
             clearTimeout(longPressTimer);
             
-            // Create ghost element
+            
             dragGhost = taskElement.cloneNode(true);
             dragGhost.className = 'task dragging';
             dragGhost.style.position = 'absolute';
@@ -388,19 +388,19 @@ export function setupTaskTouchHandling(taskElement, task) {
             dragGhost.style.width = `${taskElement.offsetWidth}px`;
             document.body.appendChild(dragGhost);
             
-            // Add visual indication that task is being dragged
+            
             taskElement.style.opacity = '0.4';
             
-            // Highlight delete button as drop target
+            
             elements.deleteBtn.classList.add('drop-target');
         }
         
         if (dragStarted && dragGhost) {
-            // Update ghost position to follow finger
-            dragGhost.style.left = `${clientX - 20}px`; // Offset from finger for visibility
+            
+            dragGhost.style.left = `${clientX - 20}px`; 
             dragGhost.style.top = `${clientY - 30}px`;
             
-            // Check if over delete button
+            
             const deleteBtnRect = elements.deleteBtn.getBoundingClientRect();
             if (clientX >= deleteBtnRect.left && clientX <= deleteBtnRect.right && 
                 clientY >= deleteBtnRect.top && clientY <= deleteBtnRect.bottom) {
@@ -417,30 +417,30 @@ export function setupTaskTouchHandling(taskElement, task) {
         document.removeEventListener('touchend', handleTaskTouchEnd);
         
         if (dragStarted && dragGhost) {
-            // Get final position
+            
             const finalX = e.changedTouches[0].clientX;
             const finalY = e.changedTouches[0].clientY;
             
-            // Check if over delete button
+            
             const deleteBtnRect = elements.deleteBtn.getBoundingClientRect();
             if (finalX >= deleteBtnRect.left && finalX <= deleteBtnRect.right && 
                 finalY >= deleteBtnRect.top && finalY <= deleteBtnRect.bottom) {
-                // Delete the task
+                
                 taskManager.deleteTask(task.id);
                 ui.renderCurrentView();
             } else {
-                // Check if the task should be moved to a different list or date
+                
                 handleTaskDrop(finalX, finalY, task);
             }
             
-            // Clean up
+            
             document.body.removeChild(dragGhost);
             taskElement.style.opacity = '';
             elements.deleteBtn.classList.remove('drop-target');
             elements.deleteBtn.classList.remove('drag-over');
         } else if (!dragStarted) {
-            // It was a tap, not a drag
-            if (!isDraggingFromIcon) { // Only toggle date view if not tapping on icon
+            
+            if (!isDraggingFromIcon) { 
                 taskElement.classList.toggle('show-date');
             }
         }
@@ -449,7 +449,7 @@ export function setupTaskTouchHandling(taskElement, task) {
     }
     
     function handleTaskDrop(x, y, task) {
-        // Check if we're over a list in list view
+        
         if (state.currentView === 'list') {
             const lists = document.querySelectorAll('.list');
             for (const list of lists) {
@@ -466,7 +466,7 @@ export function setupTaskTouchHandling(taskElement, task) {
             }
         }
         
-        // Check if we're over a date group in date view
+        
         if (state.currentView === 'date') {
             const dateGroups = document.querySelectorAll('.date-group');
             for (const group of dateGroups) {
@@ -485,14 +485,14 @@ export function setupTaskTouchHandling(taskElement, task) {
         }
     }
     
-    // Right-click for edit on desktop
+    
     taskElement.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         ui.showTaskModal(task);
     });
 }
 
-// Helper function to update task with new date
+
 function updateTaskWithNewDate(task, dateText) {
     let newDueDate = null;
     
@@ -505,7 +505,7 @@ function updateTaskWithNewDate(task, dateText) {
     } else if (dateText === 'No Due Date') {
         newDueDate = null;
     } else {
-        // Try to parse the date
+        
         try {
             const dateParts = dateText.split(' ');
             const monthName = dateParts[1];
@@ -524,11 +524,11 @@ function updateTaskWithNewDate(task, dateText) {
         }
     }
     
-    // Update the task with new due date
+    
     taskManager.updateTask(task.id, { dueDate: newDueDate });
 }
 
-// Setup date view drag and drop
+
 export function setupDateViewDragDrop() {
     const dateGroups = document.querySelectorAll('.date-group .tasks');
     
@@ -538,17 +538,17 @@ export function setupDateViewDragDrop() {
                 group: 'tasks',
                 animation: 150,
                 onStart: function(evt) {
-                    // Show delete button with a trash indicator
+                    
                     elements.deleteBtn.classList.add('drop-target');
                 },
                 onEnd: function(evt) {
-                    // Hide delete button indicator
+                    
                     elements.deleteBtn.classList.remove('drop-target');
                     
-                    // Get task ID
+                    
                     const taskId = evt.item.dataset.taskId;
                     
-                    // Check if ended over delete button
+                    
                     const deleteBtn = elements.deleteBtn;
                     const deleteBtnRect = deleteBtn.getBoundingClientRect();
                     const x = evt.originalEvent.clientX;
@@ -556,17 +556,17 @@ export function setupDateViewDragDrop() {
                     
                     if (x >= deleteBtnRect.left && x <= deleteBtnRect.right && 
                         y >= deleteBtnRect.top && y <= deleteBtnRect.bottom) {
-                        // Delete task
+                        
                         taskManager.deleteTask(taskId);
                     } else {
-                        // Get the new date from the group heading
+                        
                         const dateGroup = evt.to.closest('.date-group');
                         if (dateGroup) {
                             const dateHeading = dateGroup.querySelector('.date-heading');
                             if (dateHeading) {
                                 const dateText = dateHeading.textContent;
                                 
-                                // Update task due date
+                                
                                 const task = state.tasks.find(t => t.id === taskId);
                                 if (task) {
                                     let newDueDate = null;
@@ -580,7 +580,7 @@ export function setupDateViewDragDrop() {
                                     } else if (dateText === 'No Due Date') {
                                         newDueDate = null;
                                     } else {
-                                        // Try to parse the date
+                                        
                                         try {
                                             const dateParts = dateText.split(' ');
                                             const monthName = dateParts[1];
@@ -599,7 +599,7 @@ export function setupDateViewDragDrop() {
                                         }
                                     }
                                     
-                                    // Update the task with new due date
+                                    
                                     taskManager.updateTask(taskId, { dueDate: newDueDate });
                                 }
                             }
@@ -613,11 +613,11 @@ export function setupDateViewDragDrop() {
     });
 }
 
-// Functions that need implementation in ui.js
+
 function createTaskInList(listId) {
-    // This will be defined in ui.js
+    
 }
 
 function createTaskFromModal() {
-    // This will be defined in ui.js
+    
 }

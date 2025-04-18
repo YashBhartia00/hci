@@ -1,6 +1,6 @@
 // Utility functions
 
-// Check if a date is today
+
 export function isToday(date) {
     const today = new Date();
     return date.getDate() === today.getDate() &&
@@ -8,7 +8,7 @@ export function isToday(date) {
            date.getFullYear() === today.getFullYear();
 }
 
-// Check if a date is tomorrow
+
 export function isTomorrow(date) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -17,7 +17,7 @@ export function isTomorrow(date) {
            date.getFullYear() === tomorrow.getFullYear();
 }
 
-// Check if a date is within this week
+
 export function isThisWeek(date) {
     const now = new Date();
     const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
@@ -25,25 +25,25 @@ export function isThisWeek(date) {
     return date >= weekStart && date <= weekEnd;
 }
 
-// Format a date object to a readable string
+
 export function formatDate(date) {
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
 }
 
-// Format a date object to a short string
+
 export function formatDateShort(date) {
     const options = { month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
 }
 
-// Format time from date object (HH:MM AM/PM)
+
 export function formatTime(date) {
     const options = { hour: 'numeric', minute: 'numeric', hour12: true };
     return date.toLocaleTimeString('en-US', options);
 }
 
-// Get date color class based on due date
+
 export function getDateColorClass(dueDate) {
     if (!dueDate) return 'no-date';
     
@@ -55,7 +55,7 @@ export function getDateColorClass(dueDate) {
     return 'later';
 }
 
-// Get date text based on due date
+
 export function getDateText(dueDate) {
     if (!dueDate) return 'No Due Date';
     
@@ -66,14 +66,14 @@ export function getDateText(dueDate) {
     return formatDate(date);
 }
 
-// Group tasks by date
+
 export function groupTasksByDate(tasks) {
     const grouped = {};
     
-    // Group for tasks with no date
+    
     grouped['no-date'] = tasks.filter(task => !task.dueDate);
     
-    // Group tasks by due date
+    
     tasks.filter(task => task.dueDate).forEach(task => {
         const dateKey = task.dueDate.split('T')[0];
         if (!grouped[dateKey]) {
@@ -82,7 +82,7 @@ export function groupTasksByDate(tasks) {
         grouped[dateKey].push(task);
     });
     
-    // Sort date keys
+    
     return Object.keys(grouped)
         .sort((a, b) => {
             if (a === 'no-date') return 1;

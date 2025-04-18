@@ -5,7 +5,7 @@ import * as listManager from './lists.js';
 import * as utils from './utils.js';
 import * as drag from './drag.js';
 
-// DOM elements
+
 export const elements = {
     listView: null,
     dateView: null,
@@ -25,28 +25,28 @@ export const elements = {
     modalDragHandle: null
 };
 
-// Initialize UI
+
 export function initUI(domElements) {
-    // Store references to DOM elements
+    
     Object.assign(elements, domElements);
     
-    // Set up modal drag behavior
+    
     setupModalDrag();
     
-    // Set up task creation button drag
+    
     drag.setupTaskCreateDragging(elements.createTaskBtn);
     
-    // Position create task button next to icons
+    
     positionCreateTaskButton();
 }
 
-// Position the create task button beside the icon grid
+
 function positionCreateTaskButton() {
     const iconGrid = document.querySelector('.icon-grid');
     const createTaskBtn = document.getElementById('create-task');
     
     if (iconGrid && createTaskBtn) {
-        // Make the button inline with the icon grid
+        
         iconGrid.style.display = 'inline-block';
         iconGrid.style.width = 'calc(100% - 150px)';
         
@@ -58,7 +58,7 @@ function positionCreateTaskButton() {
     }
 }
 
-// Setup modal drag behavior
+
 function setupModalDrag() {
     let startY, startHeight;
     
@@ -85,15 +85,15 @@ function setupModalDrag() {
         const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
         const diffY = startY - currentY;
         
-        // Only snap to two positions: compact or expanded
-        const threshold = window.innerHeight * 0.3; // 30% of viewport height
+        
+        const threshold = window.innerHeight * 0.3; 
         
         if (diffY > threshold) {
-            // Expanded mode
+            
             modal.classList.add('expanded');
             modalContent.style.height = '75vh';
         } else {
-            // Compact mode
+            
             modal.classList.remove('expanded');
             modalContent.style.height = 'auto';
         }
@@ -109,7 +109,7 @@ function setupModalDrag() {
     }
 }
 
-// Switch between List and Date views
+
 export function switchView(view) {
     state.currentView = view;
     
@@ -128,7 +128,7 @@ export function switchView(view) {
     renderCurrentView();
 }
 
-// Render the current view (List or Date)
+
 export function renderCurrentView() {
     if (state.currentView === 'list') {
         renderListView();
@@ -137,21 +137,21 @@ export function renderCurrentView() {
     }
 }
 
-// Render the List View
+
 export function renderListView() {
     elements.listsContainer.innerHTML = '';
     
     state.lists.forEach(list => {
-        // Create list container
+        
         const listElement = document.createElement('div');
         listElement.className = 'list';
         listElement.dataset.listId = list.id;
         
-        // Create list header
+        
         const listHeader = document.createElement('div');
         listHeader.className = 'list-header';
         
-        // Add list icon
+        
         const listIcon = document.createElement('div');
         listIcon.className = 'list-icon';
         listIcon.innerHTML = `<i class="fas ${list.icon || 'fa-list'}"></i>`;
@@ -169,14 +169,14 @@ export function renderListView() {
         listHeader.appendChild(toggleBtn);
         listElement.appendChild(listHeader);
         
-        // Create tasks container
+        
         const tasksContainer = document.createElement('div');
         tasksContainer.className = 'tasks';
         
-        // Filter tasks for this list
+        
         const listTasks = taskManager.getFilteredTasks().filter(task => task.listId === list.id);
         
-        // For entire list header click to toggle
+        
         listHeader.addEventListener('click', () => {
             tasksContainer.style.display = tasksContainer.style.display === 'none' ? 'flex' : 'none';
             toggleBtn.innerHTML = tasksContainer.style.display === 'none' ? 
@@ -193,7 +193,7 @@ export function renderListView() {
             emptyMessage.style.fontStyle = 'italic';
             tasksContainer.appendChild(emptyMessage);
             
-            // Empty lists default to collapsed
+            
             tasksContainer.style.display = 'none';
         } else {
             listTasks.forEach(task => {
@@ -205,27 +205,27 @@ export function renderListView() {
         listElement.appendChild(tasksContainer);
         elements.listsContainer.appendChild(listElement);
         
-        // Initialize drag-and-drop for this list's tasks
+        
         drag.setupTaskSortable(listElement);
     });
 }
 
-// Render the Date View
+
 export function renderDateView() {
     elements.dateGroupsContainer.innerHTML = '';
     
-    // Get filtered tasks that are not completed
+    
     const filteredTasks = taskManager.getFilteredTasks().filter(task => !task.completed);
     
-    // Group tasks by date
+    
     const groupedTasks = utils.groupTasksByDate(filteredTasks);
     
-    // Create date groups
+    
     for (const [dateKey, tasks] of Object.entries(groupedTasks)) {
         const dateGroup = document.createElement('div');
         dateGroup.className = 'date-group';
         
-        // Create date heading
+        
         const dateHeading = document.createElement('div');
         dateHeading.className = 'date-heading';
         
@@ -243,11 +243,11 @@ export function renderDateView() {
         dateHeading.textContent = dateText;
         dateGroup.appendChild(dateHeading);
         
-        // Create tasks container
+        
         const tasksContainer = document.createElement('div');
         tasksContainer.className = 'tasks date-view-tasks';
         
-        // Add tasks to the container
+        
         tasks.forEach(task => {
             const taskElement = createDateViewTaskElement(task);
             tasksContainer.appendChild(taskElement);
@@ -257,17 +257,17 @@ export function renderDateView() {
         elements.dateGroupsContainer.appendChild(dateGroup);
     }
     
-    // Setup drag and drop for date view
+    
     drag.setupDateViewDragDrop();
 }
 
-// Create a task element for list view
+
 export function createTaskElement(task) {
     const taskElement = document.createElement('div');
     taskElement.className = 'task';
     taskElement.dataset.taskId = task.id;
     
-    // Apply color class based on due date
+    
     if (task.dueDate) {
         const colorClass = utils.getDateColorClass(task.dueDate);
         taskElement.classList.add(colorClass);
@@ -279,19 +279,19 @@ export function createTaskElement(task) {
         taskElement.classList.add('completed');
     }
     
-    // Task icon
+    
     const taskIcon = document.createElement('div');
     taskIcon.className = 'task-icon';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
-    // Icon click toggles completion with immediate visual feedback
+    
     taskIcon.addEventListener('click', (e) => {
         e.stopPropagation();
         
-        // Toggle task completion in the data model
+        
         const updatedTask = taskManager.toggleTaskCompletion(task.id);
         
-        // Update the visual state immediately before re-rendering
+        
         if (updatedTask) {
             const parentTask = taskIcon.closest('.task');
             if (updatedTask.completed) {
@@ -300,25 +300,25 @@ export function createTaskElement(task) {
                 parentTask.classList.remove('completed');
             }
             
-            // Add a short animation to indicate completion
+            
             parentTask.classList.add('just-completed');
             setTimeout(() => {
                 parentTask.classList.remove('just-completed');
-                // Now render the full view after visual feedback
+                
                 renderCurrentView();
             }, 300);
         } else {
-            // Fallback if the task wasn't found
+            
             renderCurrentView();
         }
     });
     
-    // Task text
+    
     const taskText = document.createElement('div');
     taskText.className = 'task-text';
     taskText.textContent = task.name;
     
-    // Task date/time display (initially hidden)
+    
     const taskDate = document.createElement('div');
     taskDate.className = 'task-date';
     
@@ -345,13 +345,13 @@ export function createTaskElement(task) {
     taskElement.appendChild(taskText);
     taskElement.appendChild(taskDate);
     
-    // Set up touch handling for this task
+    
     drag.setupTaskTouchHandling(taskElement, task);
     
     return taskElement;
 }
 
-// Create a task element for date view
+
 export function createDateViewTaskElement(task) {
     const taskElement = document.createElement('div');
     taskElement.className = 'task date-view-task';
@@ -361,33 +361,33 @@ export function createDateViewTaskElement(task) {
         taskElement.classList.add('completed');
     }
     
-    // Date view task structure with date on left, content on right
+    
     const taskRow = document.createElement('div');
     taskRow.className = 'date-view-task-row';
     
-    // List label
+    
     const listLabel = document.createElement('div');
     listLabel.className = 'task-list-label';
     const list = listManager.getListById(task.listId);
     listLabel.textContent = list ? list.name : 'Unknown List';
     
-    // Task content
+    
     const taskContent = document.createElement('div');
     taskContent.className = 'task-content';
     
-    // Task icon (make bigger for date view)
+    
     const taskIcon = document.createElement('div');
     taskIcon.className = 'task-icon date-view-icon';
     taskIcon.innerHTML = `<i class="fas ${task.icon || 'fa-tasks'}"></i>`;
     
-    // Icon click toggles completion with immediate visual feedback
+    
     taskIcon.addEventListener('click', (e) => {
         e.stopPropagation();
         
-        // Toggle task completion in the data model
+        
         const updatedTask = taskManager.toggleTaskCompletion(task.id);
         
-        // Update the visual state immediately before re-rendering
+        
         if (updatedTask) {
             const parentTask = taskIcon.closest('.task');
             if (updatedTask.completed) {
@@ -396,29 +396,29 @@ export function createDateViewTaskElement(task) {
                 parentTask.classList.remove('completed');
             }
             
-            // Add a short animation to indicate completion
+            
             parentTask.classList.add('just-completed');
             setTimeout(() => {
                 parentTask.classList.remove('just-completed');
-                // Now render the full view after visual feedback
+                
                 renderCurrentView();
             }, 300);
         } else {
-            // Fallback if the task wasn't found
+            
             renderCurrentView();
         }
     });
     
-    // Task info container (task name and task time)
+    
     const taskInfo = document.createElement('div');
     taskInfo.className = 'task-info';
     
-    // Task text
+    
     const taskText = document.createElement('div');
     taskText.className = 'task-text';
     taskText.textContent = task.name;
     
-    // Task time
+    
     const taskTime = document.createElement('div');
     taskTime.className = 'task-time';
     if (task.dueTime) {
@@ -434,29 +434,29 @@ export function createDateViewTaskElement(task) {
     taskElement.appendChild(listLabel);
     taskElement.appendChild(taskContent);
     
-    // Set up touch handling for this task
+    
     drag.setupTaskTouchHandling(taskElement, task);
     
     return taskElement;
 }
 
-// Show task creation/editing modal
+
 export function showTaskModal(task = null) {
     const modal = elements.taskModal;
     modal.classList.add('active');
     modal.classList.remove('expanded');
     modal.classList.remove('minimized');
     
-    // Make main content visible but modified to accommodate the task panel
+    
     document.querySelector('.app-container').classList.add('modal-active');
     
-    // Remove forced fixed positioning
+    
     const modalContent = modal.querySelector('.modal-content');
-    modalContent.style.position = ''; // removed fixed
+    modalContent.style.position = ''; 
     modalContent.style.bottom = '';
     modalContent.style.left = '';
     modalContent.style.width = '';
-    modalContent.style.maxHeight = ''; // remove forced 50vh
+    modalContent.style.maxHeight = ''; 
     modalContent.style.transform = 'none';
     modalContent.style.zIndex = '50';
     
@@ -470,15 +470,15 @@ export function showTaskModal(task = null) {
     const createTaskBtn = document.getElementById('create-task');
     const saveTaskBtn = document.getElementById('save-task');
     
-    // Clear previous selections
+    
     iconButtons.forEach(btn => btn.classList.remove('active'));
     dateButtons.forEach(btn => btn.classList.remove('active'));
     
-    // Set default icon and date
+    
     document.querySelector('.icon-btn[data-icon="fa-tasks"]')?.classList.add('active');
     document.querySelector('.date-btn[data-date="no-date"]')?.classList.add('active');
     
-    // Remove inline styles that forced icon grid to be inline
+    
     const iconGrid = document.querySelector('.icon-grid');
     if (iconGrid) {
         iconGrid.style.display = '';
@@ -492,7 +492,7 @@ export function showTaskModal(task = null) {
         createTaskBtn.style.height = '';
     }
     
-    // Show date and time selectors by default
+    
     const expandedOptions = document.querySelector('.expanded-options');
     if (expandedOptions) {
         expandedOptions.style.display = 'block';
@@ -501,21 +501,21 @@ export function showTaskModal(task = null) {
     }
     
     if (task) {
-        // Editing existing task
+        
         modalTitle.textContent = 'Edit Task';
         nameInput.value = task.name;
         
-        // Hide create button, show save button
+        
         createTaskBtn.style.display = 'none';
         saveTaskBtn.style.display = 'inline-block';
         
-        // Set icon
+        
         const iconBtn = document.querySelector(`.icon-btn[data-icon="${task.icon}"]`);
         if (iconBtn) {
             iconBtn.classList.add('active');
         }
         
-        // Set date and time
+        
         if (task.dueDate) {
             customDateInput.value = task.dueDate;
             if (utils.isToday(new Date(task.dueDate))) {
@@ -530,29 +530,29 @@ export function showTaskModal(task = null) {
             customDateInput.value = '';
         }
         
-        // Set time
+        
         if (task.dueTime) {
             customTimeInput.value = task.dueTime;
         } else {
             customTimeInput.value = '';
         }
         
-        // Set list
+        
         listSelect.value = task.listId;
         
         state.editingTask = task;
     } else {
-        // Creating new task
+        
         modalTitle.textContent = 'New Task';
         nameInput.value = '';
         customDateInput.value = '';
         customTimeInput.value = '';
         
-        // Show create button, hide save button
+        
         createTaskBtn.style.display = 'inline-block';
         saveTaskBtn.style.display = 'none';
         
-        // Set default list to first list (or uncategorized)
+        
         listSelect.value = state.lists.length > 0 ? 
             (state.lists[0].id !== state.uncategorizedListId ? state.lists[0].id : state.uncategorizedListId) : 
             state.uncategorizedListId;
@@ -560,29 +560,29 @@ export function showTaskModal(task = null) {
         state.editingTask = null;
     }
     
-    // Ensure the cancel button is visible
+    
     const cancelBtn = document.getElementById('cancel-task');
     if (cancelBtn) {
         cancelBtn.style.display = 'inline-block';
     }
     
-    // Focus on the name input
+    
     setTimeout(() => nameInput.focus(), 300);
 }
 
-// Hide task modal
+
 export function hideTaskModal() {
     elements.taskModal.classList.remove('active');
     document.querySelector('.app-container').classList.remove('modal-active');
     state.editingTask = null;
 }
 
-// Show list creation modal
+
 export function showListModal() {
     elements.listModal.classList.add('active');
     document.getElementById('list-name').value = '';
     
-    // Reset list icon selection
+    
     const listIconButtons = document.querySelectorAll('.list-icon-btn');
     listIconButtons.forEach(btn => btn.classList.remove('active'));
     document.querySelector('.list-icon-btn[data-icon="fa-list"]')?.classList.add('active');
@@ -590,16 +590,16 @@ export function showListModal() {
     setTimeout(() => document.getElementById('list-name').focus(), 300);
 }
 
-// Hide list modal
+
 export function hideListModal() {
     elements.listModal.classList.remove('active');
 }
 
-// Show filter modal
+
 export function showFilterModal() {
     elements.filterModal.classList.add('active');
     
-    // Populate list options for filtering
+    
     const listFilterOptions = document.getElementById('list-filter-options');
     listFilterOptions.innerHTML = '';
     
@@ -622,16 +622,16 @@ export function showFilterModal() {
         listFilterOptions.appendChild(option);
     });
     
-    // Set keyword filter
+    
     document.getElementById('keyword-filter').value = state.filters.keyword;
     
-    // Set date filters
+    
     document.querySelectorAll('.date-filter-btn').forEach(btn => {
         btn.classList.toggle('active', state.filters.dates.includes(btn.dataset.filter));
     });
 }
 
-// Show history/deleted tasks modal
+
 export function showHistoryModal() {
     elements.historyModal.classList.add('active');
     elements.deletedTasksContainer.innerHTML = '';
@@ -665,7 +665,7 @@ export function showHistoryModal() {
         restoreButton.textContent = 'Restore';
         restoreButton.addEventListener('click', () => {
             taskManager.restoreTask(task.id);
-            showHistoryModal(); // Refresh the modal
+            showHistoryModal(); 
         });
         
         const deleteButton = document.createElement('button');
@@ -673,7 +673,7 @@ export function showHistoryModal() {
         deleteButton.style.color = '#ef4444';
         deleteButton.addEventListener('click', () => {
             taskManager.permanentlyDeleteTask(task.id);
-            showHistoryModal(); // Refresh the modal
+            showHistoryModal(); 
         });
         
         taskActions.appendChild(restoreButton);
@@ -686,37 +686,37 @@ export function showHistoryModal() {
     });
 }
 
-// Apply filters
+
 export function applyFilters() {
-    // Get keyword filter
+    
     state.filters.keyword = document.getElementById('keyword-filter').value.trim().toLowerCase();
     
-    // Get date filters
+    
     state.filters.dates = [];
     document.querySelectorAll('.date-filter-btn.active').forEach(btn => {
         state.filters.dates.push(btn.dataset.filter);
     });
     
-    // Get list filters
+    
     state.filters.lists = [];
     document.querySelectorAll('#list-filter-options input[type="checkbox"]:checked').forEach(cb => {
         state.filters.lists.push(cb.value);
     });
     
-    // Hide filter modal
+    
     hideModals();
     
-    // Render the current view with filters applied
+    
     renderCurrentView();
 }
 
-// Reset filters
+
 export function resetFilters() {
     state.filters.keyword = '';
     state.filters.dates = [];
     state.filters.lists = [];
     
-    // Reset UI
+    
     document.getElementById('keyword-filter').value = '';
     
     document.querySelectorAll('.date-filter-btn').forEach(btn => {
@@ -727,12 +727,12 @@ export function resetFilters() {
         cb.checked = false;
     });
     
-    // Re-render
+    
     hideModals();
     renderCurrentView();
 }
 
-// Create a task from the modal (without dragging)
+
 export function createTaskFromModal() {
     const taskName = document.getElementById('task-name').value.trim();
     const activeIconBtn = document.querySelector('.icon-btn.active');
@@ -757,16 +757,16 @@ export function createTaskFromModal() {
         }
     }
     
-    // Get time
+    
     dueTime = document.getElementById('custom-time').value;
     
-    // Use selected list, or default to Uncategorized
+    
     let listId = document.getElementById('list-select').value;
     if (!listId) {
         listId = state.uncategorizedListId;
     }
     
-    // Create new task
+    
     taskManager.createTask({
         name: taskName,
         icon,
@@ -779,13 +779,13 @@ export function createTaskFromModal() {
     renderCurrentView();
 }
 
-// Create a task in a specific list (from dragging)
+
 export function createTaskInList(listId) {
     const taskName = document.getElementById('task-name').value.trim();
     const activeIconBtn = document.querySelector('.icon-btn.active');
     const icon = activeIconBtn ? activeIconBtn.dataset.icon : 'fa-tasks';
 
-    // Get date if specified
+    
     let dueDate = null;
     let dueTime = null;
     const activeDateBtn = document.querySelector('.date-btn.active');
@@ -805,10 +805,10 @@ export function createTaskInList(listId) {
         }
     }
 
-    // Get time
+    
     dueTime = document.getElementById('custom-time').value;
     
-    // Create new task
+    
     taskManager.createTask({
         name: taskName,
         icon,
@@ -821,22 +821,22 @@ export function createTaskInList(listId) {
     renderCurrentView();
 }
 
-// Create task with specific date (from dragging to date view)
+
 export function createTaskWithDate(dateText) {
     const taskName = document.getElementById('task-name').value.trim();
     const activeIconBtn = document.querySelector('.icon-btn.active');
     const icon = activeIconBtn ? activeIconBtn.dataset.icon : 'fa-tasks';
     
-    // Get time
+    
     const dueTime = document.getElementById('custom-time').value;
     
-    // Use selected list, or default to Uncategorized
+    
     let listId = document.getElementById('list-select').value;
     if (!listId) {
         listId = state.uncategorizedListId;
     }
     
-    // Convert date text to actual date
+    
     let dueDate = null;
     if (dateText === 'Today') {
         dueDate = new Date().toISOString().split('T')[0];
@@ -845,7 +845,7 @@ export function createTaskWithDate(dateText) {
         tomorrow.setDate(tomorrow.getDate() + 1);
         dueDate = tomorrow.toISOString().split('T')[0];
     } else if (dateText !== 'No Due Date') {
-        // Try to parse the date
+        
         try {
             const dateParts = dateText.split(' ');
             const monthName = dateParts[1];
@@ -864,7 +864,7 @@ export function createTaskWithDate(dateText) {
         }
     }
     
-    // Create new task
+    
     taskManager.createTask({
         name: taskName,
         icon,
@@ -877,7 +877,7 @@ export function createTaskWithDate(dateText) {
     renderCurrentView();
 }
 
-// Save task
+
 export function saveTask() {
     const taskName = document.getElementById('task-name').value.trim();
     
@@ -903,7 +903,7 @@ export function saveTask() {
         }
     }
     
-    // Get time
+    
     dueTime = document.getElementById('custom-time').value;
     
     let listId = document.getElementById('list-select').value;
@@ -912,7 +912,7 @@ export function saveTask() {
     }
     
     if (state.editingTask) {
-        // Update existing task
+        
         taskManager.updateTask(state.editingTask.id, {
             name: taskName,
             icon,
@@ -921,7 +921,7 @@ export function saveTask() {
             listId
         });
     } else {
-        // Create new task
+        
         taskManager.createTask({
             name: taskName,
             icon,
@@ -935,7 +935,7 @@ export function saveTask() {
     renderCurrentView();
 }
 
-// Save new list
+
 export function saveList() {
     const listName = document.getElementById('list-name').value.trim();
     if (!listName) {
@@ -956,7 +956,7 @@ export function saveList() {
     }
 }
 
-// Update the list dropdown in the task modal
+
 export function updateListSelect() {
     const listSelect = document.getElementById('list-select');
     listSelect.innerHTML = '';
@@ -969,7 +969,7 @@ export function updateListSelect() {
     });
 }
 
-// Hide all modals
+
 export function hideModals() {
     elements.taskModal.classList.remove('active');
     elements.filterModal.classList.remove('active');
@@ -977,12 +977,12 @@ export function hideModals() {
     elements.historyModal.classList.remove('active');
 }
 
-// Hide filter modal
+
 export function hideFilterModal() {
     elements.filterModal.classList.remove('active');
 }
 
-// Hide history modal
+
 export function hideHistoryModal() {
     elements.historyModal.classList.remove('active');
 }
