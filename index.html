@@ -22,14 +22,12 @@
         <!-- List View Container -->
         <div id="list-view" class="view-container active">
             <div class="lists" id="lists-container">
-                <!-- Lists will be dynamically inserted here -->
             </div>
         </div>
 
         <!-- Due Date View Container -->
         <div id="date-view" class="view-container">
             <div class="date-groups" id="date-groups-container">
-                <!-- Date-grouped tasks will be dynamically inserted here -->
             </div>
         </div>
 
@@ -53,7 +51,6 @@
                 <div class="filter-group">
                     <h3>Filter by list</h3>
                     <div id="list-filter-options" class="list-filter-options">
-                        <!-- Lists for filtering will be added dynamically -->
                     </div>
                 </div>
                 <div class="modal-buttons">
@@ -63,7 +60,7 @@
             </div>
         </div>
 
-        <!-- Task Creation/Edit Modal - Redesigned with smaller default size -->
+        <!-- Task Creation/Edit Modal -->
         <div id="task-modal" class="modal">
             <div class="modal-content task-modal-content">
                 <div class="modal-drag-handle"></div>
@@ -111,7 +108,6 @@
                     <div class="list-selector">
                         <h3>List</h3>
                         <select id="list-select">
-                            <!-- Lists will be dynamically added here -->
                         </select>
                     </div>
 
@@ -128,7 +124,6 @@
             <div class="modal-content">
                 <h2>New List</h2>
                 <input type="text" id="list-name" placeholder="List name">
-                
                 <div class="icon-selector">
                     <h3>List Icon</h3>
                     <div class="icon-grid">
@@ -142,7 +137,6 @@
                         <button class="list-icon-btn" data-icon="fa-folder"><i class="fas fa-folder"></i></button>
                     </div>
                 </div>
-                
                 <div class="modal-buttons">
                     <button id="cancel-list">Cancel</button>
                     <button id="save-list">Save</button>
@@ -155,7 +149,6 @@
             <div class="modal-content">
                 <h2>Deleted Tasks</h2>
                 <div id="deleted-tasks-container">
-                    <!-- Deleted tasks will appear here -->
                 </div>
                 <button id="close-history">Close</button>
             </div>

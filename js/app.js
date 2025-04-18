@@ -7,7 +7,6 @@ import * as listManager from './modules/lists.js';
 import * as utils from './modules/utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
     const elements = {
         listView: document.getElementById('list-view'),
         dateView: document.getElementById('date-view'),
@@ -29,58 +28,44 @@ document.addEventListener('DOMContentLoaded', () => {
         modalDragHandle: document.querySelector('.modal-drag-handle')
     };
 
-    // Initialize the application
     initApp(elements);
-
-    // Setup Event Listeners
     function setupEventListeners() {
-        // View switching
         elements.listViewBtn.addEventListener('click', () => ui.switchView('list'));
         elements.dateViewBtn.addEventListener('click', () => ui.switchView('date'));
 
-        // Filter button
         elements.filterBtn.addEventListener('click', ui.showFilterModal);
 
-        // Delete/History button
         elements.deleteBtn.addEventListener('click', ui.showHistoryModal);
 
-        // FAB with options
         elements.fab.addEventListener('click', () => {
             elements.fab.parentElement.classList.toggle('show-options');
         });
 
-        // FAB options
         elements.fabTask.addEventListener('click', () => ui.showTaskModal());
         elements.fabList.addEventListener('click', ui.showListModal);
 
-        // Long press on FAB for task/list creation
         let pressTimer;
         elements.fab.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
                 elements.fab.parentElement.classList.add('show-options');
-            }, 800); // 800ms for long press
+            }, 800);
         });
         elements.fab.addEventListener('touchend', () => {
             clearTimeout(pressTimer);
         });
 
-        // Task Modal
         document.getElementById('create-task').addEventListener('click', ui.createTaskFromModal);
         document.getElementById('save-task').addEventListener('click', ui.saveTask);
         document.getElementById('cancel-task').addEventListener('click', ui.hideTaskModal);
 
-        // List Modal
         document.getElementById('save-list').addEventListener('click', ui.saveList);
         document.getElementById('cancel-list').addEventListener('click', ui.hideListModal);
 
-        // Filter Modal
         document.getElementById('apply-filters').addEventListener('click', ui.applyFilters);
         document.getElementById('reset-filters').addEventListener('click', ui.resetFilters);
 
-        // History Modal
         document.getElementById('close-history').addEventListener('click', ui.hideHistoryModal);
 
-        // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal') && e.target.classList.contains('active')) {
                 ui.hideModals();
@@ -90,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Handle icon selection
         const iconButtons = document.querySelectorAll('.icon-btn');
         iconButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -99,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Handle list icon selection
         const listIconButtons = document.querySelectorAll('.list-icon-btn');
         listIconButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -108,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Handle date selection
         const dateButtons = document.querySelectorAll('.date-btn');
         dateButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -127,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Handle filter date selection
         const dateFilterButtons = document.querySelectorAll('.date-filter-btn');
         dateFilterButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -136,21 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Application initialization
     function initApp(elements) {
-        // Initialize state
         initState();
         
-        // Setup UI
         ui.initUI(elements);
-        
-        // Setup drag functionality
+
         drag.init(elements);
         
-        // Setup event listeners
         setupEventListeners();
         
-        // Initial rendering
         ui.renderCurrentView();
         ui.updateListSelect();
     }

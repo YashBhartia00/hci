@@ -1,4 +1,4 @@
-/* Base Styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -22,20 +22,20 @@ body {
 }
 
 .app-container.modal-active {
-    padding-bottom: 0; /* Remove padding */
-    transform: none; /* Remove transform */
-    transition: none; /* Remove transition */
-    overflow: hidden; /* Prevent scrolling of main container */
+    padding-bottom: 0;
+    transform: none;
+    transition: none;
+    overflow: hidden;
 }
 
-/* Integrated task modal as part of the page instead of overlay */
+
 .app-container.modal-active {
-    padding-bottom: 280px; /* Adjust based on the task creation form height */
+    padding-bottom: 280px;
     transition: padding-bottom 0.3s ease;
     overflow: auto;
 }
 
-/* Header Styles */
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -105,7 +105,7 @@ body {
     color: white;
 }
 
-/* List View Styles */
+
 .view-container {
     display: none;
     height: calc(100vh - 70px);
@@ -152,7 +152,7 @@ body {
     cursor: pointer;
     font-size: 1rem;
     color: #777;
-    pointer-events: none; /* Let the clicks pass through to the header */
+    pointer-events: none;
 }
 
 .tasks {
@@ -183,7 +183,7 @@ body {
     background-color: #f0f0f0;
 }
 
-/* Task color based on due date */
+
 .task.today {
     background-color: #fef2f2;
 }
@@ -252,13 +252,13 @@ body {
     display: flex;
 }
 
-/* Date View Task Style - Updated for new layout */
+
 .date-view-tasks {
     flex-direction: column;
 }
 
 .date-group {
-    margin-bottom: 15px; /* Reduced from 20px */
+    margin-bottom: 15px;
     border-bottom: #eee 1px solid;
     position: relative;
 }
@@ -266,9 +266,9 @@ body {
 .date-heading {
     font-size: 1rem;
     font-weight: 600;
-    padding: 8px 15px; /* Reduced padding from 10px to 8px */
-    /* border-bottom: 2px solid #eee; */
-    margin-bottom: 0.2rem; /* Reduced from 0.5rem */
+    padding: 8px 15px;
+   
+    margin-bottom: 0.2rem;
     position: sticky;
     top: 0;
     background-color: #fff;
@@ -284,14 +284,14 @@ body {
     flex-direction: column;
     background-color: #fff !important;
     border: 1px solid #eee;
-    padding: 10px; /* Reduced from 12px */
+    padding: 10px;
     margin-left: 20px;
-    margin-bottom: 6px; /* Reduced from 8px */
+    margin-bottom: 6px;
 }
 
-/* Additional spacing adjustment */
+
 .date-group .tasks {
-    margin-top: 0; /* Remove margin above tasks */
+    margin-top: 0;
 }
 
 .task-list-label {
@@ -326,7 +326,7 @@ body {
     white-space: nowrap;
 }
 
-/* Filter by Date Tags */
+
 .date-tag {
     display: inline-block;
     padding: 4px 8px;
@@ -361,12 +361,12 @@ body {
     color: #6b7280;
 }
 
-/* Due Date View Styles */
+
 .date-group {
     margin-bottom: 20px;
 }
 
-/* Modal Styles */
+
 .modal {
     display: none;
     position: fixed;
@@ -395,16 +395,16 @@ body {
     overflow-y: auto;
 }
 
-/* Update task modal styling for integration */
+
 #task-modal .modal-content {
-    position: relative; /* Not static or fixed */
+    position: relative;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     width: 100%;
     max-width: 100%;
-    transform: none; /* Remove transform that was on modal-content */
+    transform: none;
     height: auto;
-    padding-top: 40px; /* Space for the drag handle */
+    padding-top: 40px;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -523,7 +523,7 @@ body {
     color: white;
 }
 
-/* Icon Selector - Reduced size */
+
 .icon-selector {
     margin-bottom: 10px;
 }
@@ -542,7 +542,7 @@ body {
     width: calc(100% - 140px);
 }
 
-/* Fix icon grid and create button layout */
+
 .icon-grid {
     display: inline-block;
     width: calc(100% - 150px);
@@ -590,7 +590,7 @@ body {
     display: none;
 }
 
-/* Floating Action Button */
+
 .fab-container {
     position: fixed;
     bottom: 20px;
@@ -665,7 +665,7 @@ body {
     opacity: 1;
 }
 
-/* Deleted Tasks History */
+
 #deleted-tasks-container {
     max-height: 60vh;
     overflow-y: auto;
@@ -709,9 +709,9 @@ body {
     font-size: 0.9rem;
 }
 
-/* Task creation bottom sheet - Updated for compact mode */
+
 #task-modal {
-    position: fixed; /* Change from static to fixed */
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
@@ -726,18 +726,18 @@ body {
 }
 
 #task-modal .modal-content {
-    position: relative; /* Not static or fixed */
+    position: relative;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     width: 100%;
     max-width: 100%;
-    transform: none; /* Remove transform that was on modal-content */
+    transform: none;
     height: auto;
-    padding-top: 40px; /* Space for the drag handle */
+    padding-top: 40px;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Expanded and minimized states for task modal */
+
 #task-modal.expanded .modal-content {
     height: 75vh;
 }
@@ -771,7 +771,7 @@ body {
     opacity: 1;
 }
 
-/* Always show expanded options in task modal */
+
 #task-modal .expanded-options {
     display: block;
     opacity: 1;
@@ -808,7 +808,7 @@ body {
     cursor: grabbing;
 }
 
-/* Fix icon grid and create button layout */
+
 .create-task-btn {
     display: inline-block;
     vertical-align: middle;
@@ -816,7 +816,7 @@ body {
     margin-left: 15px;
 }
 
-/* Empty list message */
+
 .empty-list-message {
     padding: 15px;
     text-align: center;
@@ -824,7 +824,7 @@ body {
     font-style: italic;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 480px) {
     .icon-grid {
         grid-template-columns: repeat(4, 1fr);
@@ -849,14 +849,14 @@ body {
     }
 }
 
-/* Dragging task styling */
+
 .task.dragging {
     opacity: 0.8;
     background-color: #e6f7ff;
     border: 2px solid #1890ff;
 }
 
-/* Animation for task completion */
+
 @keyframes taskComplete {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
@@ -867,7 +867,7 @@ body {
     animation: taskComplete 0.5s ease;
 }
 
-/* Phantom task when dragging */
+
 .phantom-task {
     width: auto;
     max-width: 200px;
@@ -877,12 +877,12 @@ body {
     padding: 10px 15px;
 }
 
-/* Make the date and time selectors appear side by side */
+
 .date-selector h3, .list-selector h3 {
     margin-top: 15px;
 }
 
-/* Better positioning for the save and cancel buttons */
+
 .modal-buttons {
     margin-top: 20px;
     display: flex;
@@ -890,7 +890,7 @@ body {
     gap: 10px;
 }
 
-/* 1. icon & button side by side, button stretches to grid height */
+
 .icon-selector-inner {
     display: flex;
     align-items: stretch;
@@ -909,14 +909,14 @@ body {
     cursor: pointer;
 }
 
-/* 2. always show date/time and list selectors when sheet is active */
+
 #task-modal .date-selector,
 #task-modal .list-selector {
     display: block !important;
 }
 
-/* 3. remove fixed height */
-/* Fix icon grid and create button layout */
+
+
 .create-task-btn {
     display: inline-block;
     vertical-align: middle;
@@ -924,7 +924,7 @@ body {
     margin-left: 15px;
 }
 
-/* Force a 3-row layout for icons */
+
 .icon-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -933,5 +933,5 @@ body {
 }
 
 .date-group .tasks {
-    margin-top: 0.1rem; /* Reduce space above tasks */
+    margin-top: 0.1rem;
 }
