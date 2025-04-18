@@ -1,6 +1,6 @@
 # HCI Task Manager
 
-This project is built for our HCI class at Telecom Paris. It demonstrates a task management application with a unique task organization system, drag-and-drop feature and multiple views.
+This project is built for our HCI class at Telecom Paris. It demonstrates a task management application with a task organization system (inspired by duolingo), drag-and-drop feature and multiple views.
 
 ## Authors
 • Helena Cadevall Soto  
